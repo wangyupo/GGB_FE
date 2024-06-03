@@ -177,3 +177,39 @@ export const getWeekTime = date => {
   }
   return arr;
 };
+
+/**
+ * 根据给定的格式格式化日期
+ * @param {Date} date - JavaScript 日期对象
+ * @param {string} format - 目标格式字符串，如 "YYYY-MM-DD HH:mm:ss"
+ * @returns {string} - 格式化后的日期字符串
+ */
+function formatDate(date, format) {
+  const map = {
+    YYYY: date.getFullYear(),
+    MM: (date.getMonth() + 1).toString().padStart(2, "0"),
+    DD: date.getDate().toString().padStart(2, "0"),
+    HH: date.getHours().toString().padStart(2, "0"),
+    mm: date.getMinutes().toString().padStart(2, "0"),
+    ss: date.getSeconds().toString().padStart(2, "0"),
+    SSS: date.getMilliseconds().toString().padStart(3, "0"),
+  };
+
+  return format.replace(/YYYY|MM|DD|HH|mm|ss|SSS/g, match => map[match]);
+}
+
+/**
+ * 将 ISO 8601 日期字符串转换为格式化后的日期字符串
+ * @param {string} isoDateString - ISO 8601 日期字符串
+ * @param {string} format - 目标格式字符串，如 "YYYY-MM-DD HH:mm:ss"
+ * @returns {string} - 格式化后的日期字符串
+ */
+export const formatISODate = (isoDateString, format = "YYYY-MM-DD HH:mm:ss") => {
+  const date = new Date(isoDateString);
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid ISO 8601 date string");
+  }
+
+  return formatDate(date, format);
+};
