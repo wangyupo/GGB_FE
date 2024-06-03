@@ -13,7 +13,7 @@ export function removeAllLoginInfo() {
   } catch (error) {
     console.log(error);
   }
-  cookies.remove("Authorization");
+  cookies.remove("x-token");
   removeLocalStorage("user");
 }
 
@@ -265,6 +265,13 @@ export const numberFormat = num => {
   return num.toString().replace(/\d+/, function (n) {
     return n.replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
   });
+};
+
+// 通过值反显label
+export const getLabel = (options, value) => {
+  const obj = options.find(i => i.value == value);
+  if (!obj) return "--";
+  return obj.label;
 };
 
 // 通过 searchInfo 初始化搜索数据
