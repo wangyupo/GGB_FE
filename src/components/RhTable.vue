@@ -85,6 +85,10 @@
                   <span v-if="/^1[3-9][0-9]{9}$/.test(scope.row[column.prop])">
                     {{ formatPhone(scope.row[column.prop]) }}
                   </span>
+                  <!-- 识别并格式化日期 -->
+                  <span v-else-if="column.dataType == 'date'">
+                    {{ formatISODate(scope.row[column.prop]) }}
+                  </span>
                   <!-- 空值默认返回 -- -->
                   <span v-else>{{ epyReturn(scope.row[column.prop]) }}</span>
                   <!-- 自定义后缀 -->
@@ -119,7 +123,7 @@
 </template>
 
 <script setup>
-import { formatPhone, copy, epyReturn } from "@/utils/index";
+import { formatPhone, copy, epyReturn, formatISODate } from "@/utils/index";
 import { onMounted, onUpdated, reactive, ref, useAttrs, watch } from "vue";
 import { debounce, cloneDeep } from "lodash-es";
 import Sortable from "sortablejs";
