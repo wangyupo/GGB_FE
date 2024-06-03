@@ -1,25 +1,25 @@
 import request from "@/utils/request";
 const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
-export const getRole = params => {
+export const roleList = params => {
   return request({
-    url: `${baseURl}/role`,
+    url: `${baseURl}/system/role`,
     method: "get",
     params,
   });
 };
 
-export const postRole = data => {
+export const addRole = data => {
   return request({
-    url: `${baseURl}/role`,
+    url: `${baseURl}/system/role`,
     method: "post",
     data,
   });
 };
 
-export const putRole = data => {
+export const updateRole = data => {
   return request({
-    url: `${baseURl}/role`,
+    url: `${baseURl}/system/role`,
     method: "put",
     data,
   });
@@ -27,14 +27,14 @@ export const putRole = data => {
 
 export const deleteRole = id => {
   return request({
-    url: `${baseURl}/role/${id}`,
+    url: `${baseURl}/system/role/${id}`,
     method: "delete",
   });
 };
 
 export const changeRoleStatus = data => {
   return request({
-    url: `${baseURl}/role/status`,
+    url: `${baseURl}/system/role/status`,
     method: "post",
     data,
   });

@@ -1,25 +1,25 @@
 import request from "@/utils/request";
 const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
-export const getDictData = params => {
+export const dictDataList = params => {
   return request({
-    url: `${baseURl}/dictData`,
+    url: `${baseURl}/system/dictData`,
     method: "get",
     params,
   });
 };
 
-export const postDictData = data => {
+export const addDictData = data => {
   return request({
-    url: `${baseURl}/dictData`,
+    url: `${baseURl}/system/dictData`,
     method: "post",
     data,
   });
 };
 
-export const putDictData = (id, data) => {
+export const updateDictData = (id, data) => {
   return request({
-    url: `${baseURl}/dictData/${id}`,
+    url: `${baseURl}/system/dictData/${id}`,
     method: "put",
     data,
   });

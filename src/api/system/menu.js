@@ -1,24 +1,25 @@
 import request from "@/utils/request";
 const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
-export const getMenu = params => {
+export const menuList = params => {
   return request({
-    url: `${baseURl}/menu`,
+    url: `${baseURl}/system/menu`,
     method: "get",
+    params,
   });
 };
 
-export const postMenu = data => {
+export const addMenu = data => {
   return request({
-    url: `${baseURl}/menu`,
+    url: `${baseURl}/system/menu`,
     method: "post",
     data,
   });
 };
 
-export const putMenu = (id, data) => {
+export const updateMenu = (id, data) => {
   return request({
-    url: `${baseURl}/menu/${id}`,
+    url: `${baseURl}/system/menu/${id}`,
     method: "put",
     data,
   });
@@ -26,14 +27,14 @@ export const putMenu = (id, data) => {
 
 export const deleteMenu = id => {
   return request({
-    url: `${baseURl}/menu/${id}`,
+    url: `${baseURl}/system/menu/${id}`,
     method: "delete",
   });
 };
 
 export const moveMenu = data => {
   return request({
-    url: `${baseURl}/menu/move`,
+    url: `${baseURl}/system/menu/move`,
     method: "post",
     data,
   });
@@ -41,7 +42,7 @@ export const moveMenu = data => {
 
 export const getMenuByRole = params => {
   return request({
-    url: `${baseURl}/menu/role`,
+    url: `${baseURl}/system/menu/role`,
     method: "get",
     params,
   });

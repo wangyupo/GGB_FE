@@ -3,7 +3,7 @@ const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
 export const getUser = params => {
   return request({
-    url: `${baseURl}/user`,
+    url: `${baseURl}/system/user`,
     method: "get",
     params,
   });
@@ -11,7 +11,7 @@ export const getUser = params => {
 
 export const postUser = data => {
   return request({
-    url: `${baseURl}/user`,
+    url: `${baseURl}/system/user`,
     method: "post",
     data,
   });
@@ -19,7 +19,7 @@ export const postUser = data => {
 
 export const putUser = (id, data) => {
   return request({
-    url: `${baseURl}/user/${id}`,
+    url: `${baseURl}/system/user/${id}`,
     method: "put",
     data,
   });
@@ -27,22 +27,21 @@ export const putUser = (id, data) => {
 
 export const deleteUser = id => {
   return request({
-    url: `${baseURl}/user/${id}`,
+    url: `${baseURl}/system/user/${id}`,
     method: "delete",
   });
 };
 
-export const resetPwd = params => {
+export const resetPassword = id => {
   return request({
-    url: `${baseURl}/user/resetPwd`,
-    method: "get",
-    params,
+    url: `${baseURl}/system/user/resetPassword/${id}`,
+    method: "put",
   });
 };
 
-export const changePwd = data => {
+export const changePassword = data => {
   return request({
-    url: `${baseURl}/user/changePwd`,
+    url: `${baseURl}/system/user/changePassword`,
     method: "post",
     data,
   });
