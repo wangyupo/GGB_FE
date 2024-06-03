@@ -1,7 +1,11 @@
 <template>
   <!-- 角色管理 -->
   <div>
-    <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
+    <RhSearch :searchInfo="searchInfo" :searchForm="searchForm" @search="handleSearch">
+      <template #right-slot>
+        <el-button type="primary" @click="showDialog">添加角色</el-button>
+      </template>
+    </RhSearch>
     <RhTable
       border
       stripe
@@ -11,22 +15,24 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #status="{ scope }">
-        {{ getLabel(StatusOptions, scope.row.status) }}
+        <el-tag v-if="scope.row.status">启用</el-tag>
+        <el-tag type="danger" v-else>已禁用</el-tag>
       </template>
       <template #operate="{ scope }">
-        <el-button type="primary" link @click="handleSetUser(scope.row)">分配用户</el-button>
-        <el-button type="primary" link @click="showDialog(scope.row)">编辑</el-button>
-        <!-- <el-button :type="scope.row.status ? 'danger' : 'primary'" link @click="handleChangeStatus(scope.row)">
+        <el-button :type="scope.row.status ? 'danger' : 'primary'" link @click="handleChangeStatus(scope.row)">
           {{ scope.row.status ? "禁用" : "启用" }}
-        </el-button> -->
+        </el-button>
+        <el-button type="primary" link @click="showDialog(scope.row)">编辑</el-button>
+        <el-button type="primary" link @click="handleSetUser(scope.row)">分配用户</el-button>
       </template>
     </RhTable>
 
-    <DialogOperate
+    <AddDialog
       v-model="dialogVisible"
-      :title="`${detail.id ? '编辑' : '添加'}角色`"
+      :title="`${role.id ? '编辑' : '添加'}角色`"
       width="700px"
-      :data="detail"
+      :data="role"
+      :menu="menu"
       @close="fn_getList"
     />
   </div>
@@ -34,46 +40,45 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData, getLabel } from "@/utils/index.js";
-import { roleList, deleteRole } from "@/api/system/role.js";
-import { StatusOptions } from "@/enums/index.js";
-import DialogOperate from "./components/dialogOperate.vue";
+import { getRole, putRole, changeRoleStatus } from "@/api/role.js";
+import { getMenu } from "@/api/menu.js";
+import AddDialog from "./components/addDialog.vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const role = ref({});
+const menu = ref([]);
+
 /** 弹窗 START **/
 const dialogVisible = ref(false); // 弹窗显示/隐藏
-const detail = ref({});
 
 // 显示弹窗
-const showDialog = (row = {}) => {
-  detail.value = row;
+const showDialog = row => {
+  role.value = row;
   dialogVisible.value = true;
 };
 /** 弹窗 END **/
 
 // 条件配置
-const searchForm = ref({});
+const searchForm = ref({
+  roleName: "",
+  roleCode: "",
+});
 const searchInfo = ref([
   {
     type: "input",
-    label: "名称",
-    placeholder: "请输入名称",
-    key: "name",
-    defaultValue: "",
-    colSpan: 8,
+    placeholder: "请输入角色名",
+    key: "roleName",
+    value: "",
+    colSpan: 4,
   },
   {
-    type: "select",
-    label: "类型",
-    placeholder: "请选择类型",
-    key: "type",
-    defaultValue: "",
-    options: [
-      { value: "1", label: "选项一" },
-      { value: "2", label: "选项二" },
-    ],
-    colSpan: 8,
+    type: "input",
+    placeholder: "请输入角色标识码",
+    key: "roleCode",
+    value: "",
+    colSpan: 4,
   },
 ]);
 // 表格配置
@@ -90,12 +95,11 @@ const tableData = reactive({
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
 });
-const loading = ref(false); // 加载状态
+const loading = ref(false);
 
-// 组件挂载完成后执行
 onMounted(() => {
-  searchForm.value = initSearchData(searchInfo.value);
   fn_getList();
+  fn_getMenu();
 });
 
 // 条件查询
@@ -114,11 +118,11 @@ const fn_getList = pageNumber => {
     },
     searchForm.value
   );
-  roleList(params)
+  getRole(params)
     .then(res => {
-      if (res.code == 0) {
-        tableData.data = res.data.list;
-        tableData.pages.total = res.data.total;
+      if (res.code == 200) {
+        tableData.data = res.data;
+        tableData.pages.total = res.total;
         tableData.pages.pageNumber = params.pageNumber;
       }
     })
@@ -135,20 +139,33 @@ const pageSizeChange = pageSize => {
 
 // 启用/禁用
 const handleChangeStatus = row => {
-  // const params = {
-  //   id: row.id,
-  //   status: !row.status,
-  // };
-  // changeRoleStatus(params)
-  //   .then(res => {
-  //     if (res.code == 200) {
-  //       ElMessage({ type: "success", message: `${row.roleName}${row.status ? "禁用" : "启用"}成功！` });
-  //     }
-  //   })
-  //   .catch(() => {})
-  //   .finally(() => {
-  //     fn_getList();
-  //   });
+  const params = {
+    id: row.id,
+    status: !row.status,
+  };
+  changeRoleStatus(params)
+    .then(res => {
+      if (res.code == 200) {
+        ElMessage({ type: "success", message: `${row.roleName}${row.status ? "禁用" : "启用"}成功！` });
+      }
+    })
+    .catch(() => {})
+    .finally(() => {
+      fn_getList();
+    });
+};
+
+// 获取菜单
+const fn_getMenu = () => {
+  const params = {};
+  getMenu(params)
+    .then(res => {
+      if (res.code == 200) {
+        menu.value = res.data;
+      }
+    })
+    .catch(() => {})
+    .finally(() => {});
 };
 
 // 分配用户

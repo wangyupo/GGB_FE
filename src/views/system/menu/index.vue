@@ -32,8 +32,9 @@
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" status-icon>
         <el-form-item label="菜单类型" prop="type">
           <el-radio-group v-model="ruleForm.type">
-            <el-radio label="1">菜单</el-radio>
-            <el-radio label="2">业务页面</el-radio>
+            <el-radio v-for="(item, index) in SYS_MenuTypeOptions" :key="index" :label="item.value">
+              {{ item.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="父级菜单" v-if="!isEdit && selectedMenu.id">
@@ -49,7 +50,7 @@
           <el-input v-model="ruleForm.icon" placeholder="请输入菜单图标" />
         </el-form-item>
         <el-form-item label="排序号" prop="sort">
-          <el-input v-model="ruleForm.sort" placeholder="请输入排序号（越小越靠前）" />
+          <el-input v-pos-int v-model.number="ruleForm.sort" placeholder="请输入排序号（越小越靠前）" />
         </el-form-item>
       </el-form>
 
@@ -63,8 +64,10 @@
 
 <script setup>
 import { nextTick, onMounted, reactive, ref } from "vue";
-import { getMenu, postMenu, putMenu, deleteMenu, moveMenu } from "@/api/menu.js";
+import { menuList, addMenu, updateMenu, deleteMenu, moveMenu } from "@/api/system/menu.js";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { arr2tree } from "@/utils/index.js";
+import { SYS_MenuTypeOptions } from "@/enums/index.js";
 import { cloneDeep } from "lodash-es";
 
 const loading = ref(false);
@@ -78,8 +81,8 @@ const ruleForm = reactive({
   path: "",
   icon: "",
   parentId: 0, // 默认为0，代表根节点
-  sort: "1",
-  type: "1", // 页面类型：1-菜单；2-业务页面
+  sort: 1,
+  type: 1, // 页面类型：1-菜单；2-业务页面
 });
 const rules = reactive({
   label: [{ required: true, message: "请输入菜单名称", trigger: "blur" }],
@@ -88,7 +91,7 @@ const rules = reactive({
 });
 
 onMounted(() => {
-  fn_getMenu();
+  fn_menuList();
 });
 
 // 提交表单
@@ -98,10 +101,10 @@ const submitForm = async () => {
     if (valid) {
       // do something
       if (isEdit.value) {
-        fn_putMenu();
+        fn_updateMenu();
         return;
       }
-      fn_postMenu();
+      fn_addMenu();
     }
   });
 };
@@ -168,15 +171,15 @@ const handleNodeDrop = (draggingNode, dropNode, dropType, ev) => {
   // console.log(draggingNode, dropNode, dropType, ev);
   exitEditMode();
   const params = {
-    origin_id: draggingNode.data.id,
-    target_id: dropNode.data.id,
-    drop_type: dropType,
+    originId: draggingNode.data.id,
+    targetId: dropNode.data.id,
+    dropType: dropType,
   };
   moveMenu(params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "菜单位置修改成功！" });
-        fn_getMenu();
+        fn_menuList();
       }
     })
     .catch(() => {})
@@ -187,13 +190,13 @@ const handleNodeDrop = (draggingNode, dropNode, dropType, ev) => {
  * 获取菜单
  * @param {Boolean} isReset 是否重置表单、计算排序。（编辑成功后保留，无需重置）
  */
-const fn_getMenu = (isReset = true) => {
+const fn_menuList = (isReset = true) => {
   loading.value = true;
   const params = {};
-  getMenu(params)
+  menuList(params)
     .then(res => {
-      if (res.code == 200) {
-        menu.value = res.data;
+      if (res.code == 0) {
+        menu.value = arr2tree(res.data.list);
         if (isReset) {
           resetForm();
           autoCalcSort();
@@ -214,14 +217,14 @@ const fn_getMenu = (isReset = true) => {
 };
 
 // 创建菜单
-const fn_postMenu = () => {
+const fn_addMenu = () => {
   loading.value = true;
   const params = ruleForm;
   if (selectedMenu.value.id) params.parentId = selectedMenu.value.id;
-  postMenu(params)
+  addMenu(params)
     .then(res => {
-      if (res.code == 200) {
-        fn_getMenu();
+      if (res.code == 0) {
+        fn_menuList();
         ElMessage({ type: "success", message: "菜单添加成功！" });
         handleMenuAdd();
       }
@@ -233,13 +236,13 @@ const fn_postMenu = () => {
 };
 
 // 修改菜单
-const fn_putMenu = () => {
+const fn_updateMenu = () => {
   loading.value = true;
   const params = ruleForm;
-  putMenu(selectedMenu.value.id, params)
+  updateMenu(selectedMenu.value.id, params)
     .then(res => {
-      if (res.code == 200) {
-        fn_getMenu(false);
+      if (res.code == 0) {
+        fn_menuList(false);
         ElMessage({ type: "success", message: "菜单编辑成功！" });
       }
     })
@@ -251,7 +254,7 @@ const fn_putMenu = () => {
 
 // 删除菜单
 const handleDel = () => {
-  ElMessageBox.confirm(`确认删除菜单${selectedMenu.value.label}?`, "系统提示", {
+  ElMessageBox.confirm(`确认删除菜单 ${selectedMenu.value.label}?`, "系统提示", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
@@ -260,9 +263,9 @@ const handleDel = () => {
       loading.value = true;
       deleteMenu(selectedMenu.value.id)
         .then(res => {
-          if (res.code == 200) {
+          if (res.code == 0) {
             exitEditMode();
-            fn_getMenu();
+            fn_menuList();
             ElMessage({ type: "success", message: "删除成功！" });
           }
         })

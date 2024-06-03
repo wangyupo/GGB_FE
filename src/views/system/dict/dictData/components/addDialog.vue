@@ -21,7 +21,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { postDictData, putDictData } from "@/api/dictData.js";
+import { addDictData, updateDictData } from "@/api/system/dictData.js";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 
@@ -65,7 +65,7 @@ const submitForm = async formEl => {
 // 添加字典
 const fn_postDict = () => {
   const params = ruleForm;
-  postDictData(params)
+  addDictData(params)
     .then(res => {
       if (res.code == 200) {
         ElMessage({ type: "success", message: "添加成功！" });
@@ -79,7 +79,7 @@ const fn_postDict = () => {
 // 编辑字典
 const fn_putDict = () => {
   const params = ruleForm;
-  putDictData(props.data.id, params)
+  updateDictData(props.data.id, params)
     .then(res => {
       if (res.code == 200) {
         ElMessage({ type: "success", message: "编辑成功！" });

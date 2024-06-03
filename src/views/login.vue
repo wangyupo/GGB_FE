@@ -6,18 +6,18 @@
       <div class="w-[300px] bg-white border border-[var(--el-border-color-light)] rounded-lg">
         <div class="relative border-b border-b-[var(--el-border-color-light)]">
           <input
-            v-model="form.email"
+            v-model="form.userName"
             id="login_username"
             type="text"
             class="w-full px-3 rounded-t-lg focus:ring-4 focus:ring-[#bbd3f7] relative focus:z-10 transition-all"
-            :class="[nameInputFocus || form.email ? 'pt-6 pb-2' : 'py-4']"
+            :class="[nameInputFocus || form.userName ? 'pt-6 pb-2' : 'py-4']"
             @focus="inputFocus('login_username')"
             @blur="inputBlur('login_username')"
           />
           <label
             for="login_username"
             class="absolute left-3 z-10 transition-all"
-            :class="[nameInputFocus || form.email ? 'top-1 text-sm text-gray-500' : 'top-1/2 -translate-y-1/2']"
+            :class="[nameInputFocus || form.userName ? 'top-1 text-sm text-gray-500' : 'top-1/2 -translate-y-1/2']"
           >
             邮箱
           </label>
@@ -65,9 +65,10 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
-import { getMenuByRole, getMenu } from "@/api/menu.js";
+import { getMenuByRole } from "@/api/system/menu.js";
 import { login } from "@/api/login.js";
 import { useLayoutStore } from "@/stores/layout.js";
+import { arr2tree } from "@/utils/index.js";
 import { ElMessage } from "element-plus";
 
 const userStore = useUserStore();
@@ -79,7 +80,7 @@ const nameInputFocus = ref(false);
 const passwordInputFocus = ref(false);
 const checked = ref(false);
 const form = reactive({
-  email: "",
+  userName: "",
   password: "",
 });
 
@@ -92,7 +93,7 @@ const inputFocus = params => {
 };
 const inputBlur = params => {
   if (params === "login_username") {
-    if (!form.email) nameInputFocus.value = false;
+    if (!form.userName) nameInputFocus.value = false;
   } else if (params === "login_password") {
     if (!form.password) passwordInputFocus.value = false;
   }
@@ -103,11 +104,14 @@ const handleLogin = () => {
   const params = form;
   login(params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         userStore.$patch(state => {
-          state.userInfo = res.user;
+          state.userInfo = res.data.user;
         });
-        fn_getMenu();
+        userStore.$patch(state => {
+          state.menu = arr2tree(res.data.menu);
+        });
+        router.replace({ path: "/" });
       }
     })
     .catch(() => {})

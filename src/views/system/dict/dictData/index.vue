@@ -25,7 +25,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { getDictData } from "@/api/dictData.js";
+import { dictDataList } from "@/api/system/dictData.js";
 import AddDialog from "./components/addDialog.vue";
 import { useRoute } from "vue-router";
 
@@ -92,7 +92,7 @@ const fn_getList = pageNumber => {
     },
     searchForm.value
   );
-  getDictData(params)
+  dictDataList(params)
     .then(res => {
       if (res.code == 200) {
         tableData.data = res.data;

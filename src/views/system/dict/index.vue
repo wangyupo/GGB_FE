@@ -27,7 +27,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { getDict, deleteDict } from "@/api/dict.js";
+import { dictCategoryList, deleteDictCategoryList } from "@/api/system/dictCategory.js";
 import AddDialog from "./components/addDialog.vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -92,7 +92,7 @@ const fn_getList = pageNum => {
     },
     searchForm.value
   );
-  getDict(params)
+  dictCategoryList(params)
     .then(res => {
       if (res.code == 200) {
         tableData.data = res.data;
@@ -129,7 +129,7 @@ const handleDel = row => {
     type: "warning",
   })
     .then(() => {
-      deleteDict(row.id)
+      deleteDictCategoryList(row.id)
         .then(res => {
           if (res.code == 200) {
             ElMessage({ type: "success", message: `${row.name}删除成功！` });

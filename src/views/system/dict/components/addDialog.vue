@@ -18,7 +18,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { postDict, putDict } from "@/api/dict.js";
+import { addDictCategoryList, updateDictCategoryList } from "@/api/system/dictCategory.js";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({
@@ -56,7 +56,7 @@ const submitForm = async () => {
 // 添加字典
 const fn_postDict = () => {
   const params = ruleForm;
-  postDict(params)
+  addDictCategoryList(params)
     .then(res => {
       if (res.code == 200) {
         ElMessage({ type: "success", message: "添加成功！" });
@@ -70,7 +70,7 @@ const fn_postDict = () => {
 // 编辑字典
 const fn_putDict = () => {
   const params = ruleForm;
-  putDict(props.data.id, params)
+  updateDictCategoryList(props.data.id, params)
     .then(res => {
       if (res.code == 200) {
         ElMessage({ type: "success", message: "编辑成功！" });

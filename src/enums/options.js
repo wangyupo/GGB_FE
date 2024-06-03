@@ -5,6 +5,12 @@
 
 // 状态（启用/禁用）
 export const StatusOptions = [
-  { label: "启用", value: "on" },
-  { label: "禁用", value: "off" },
+  { label: "启用", value: "1" },
+  { label: "禁用", value: "2" },
+];
+
+// 系统管理-菜单类型
+export const SYS_MenuTypeOptions = [
+  { label: "菜单", value: 1 },
+  { label: "业务页面", value: 2 },
 ];
