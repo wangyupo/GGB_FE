@@ -1,10 +1,9 @@
-const Dict = () => import("@/views/system/dict/index.vue");
-const DictData = () => import("@/views/system/dict/dictData/index.vue");
-const Menu = () => import("@/views/system/menu/index.vue");
-const Employee = () => import("@/views/system/employee/index.vue");
 const User = () => import("@/views/system/user/index.vue");
 const Role = () => import("@/views/system/role/index.vue");
 const RoleUser = () => import("@/views/system/role/user/index.vue");
+const Menu = () => import("@/views/system/menu/index.vue");
+const Dict = () => import("@/views/system/dict/index.vue");
+const DictData = () => import("@/views/system/dict/dictData/index.vue");
 const LoginLog = () => import("@/views/system/loginLog/index.vue");
 
 const route = [
@@ -28,11 +27,6 @@ const route = [
     meta: {
       wrapperType: "fullPage",
     },
-  },
-  {
-    path: "/system/employee",
-    name: "Employee",
-    component: Employee,
   },
   {
     path: "/system/user",

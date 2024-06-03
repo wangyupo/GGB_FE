@@ -12,7 +12,6 @@ const notFound = () => import("@/views/404.vue");
 const largeScreen = () => import("@/views/largeScreen.vue");
 
 const home = () => import("@/views/home/index.vue");
-const Salary = () => import("@/views/salary/index.vue");
 import routeSystem from "./routeSystem";
 
 const router = createRouter({
@@ -67,11 +66,6 @@ const router = createRouter({
             transparentBackground: true,
             wrapperType: "flowPage",
           },
-        },
-        {
-          path: "/salary",
-          name: "Salary",
-          component: Salary,
         },
         ...routeSystem,
 
