@@ -13,15 +13,18 @@ export function arr2tree(array, config = {}) {
   const idField = config.id || "id";
   const parentIdField = config.parentId || "parentId";
   const childrenField = config.children || "children";
+  const sortField = config.sort || "sort";
 
   const nodeMap = {};
   const resultTree = [];
 
+  // 构建 nodeMap
   clonedArray.forEach(item => {
     const id = item[idField];
     nodeMap[id] = item;
   });
 
+  // 生成树并处理子节点
   clonedArray.forEach(item => {
     const parentId = item[parentIdField];
     // 如果 parentId 为 "0"、0 或不存在于 nodeMap 中，则是根节点
@@ -35,6 +38,28 @@ export function arr2tree(array, config = {}) {
       }
       parent[childrenField].push(item);
     }
+  });
+
+  // 递归排序
+  function sortTree(node) {
+    if (node[childrenField]) {
+      node[childrenField].forEach(child => sortTree(child));
+      node[childrenField].sort((a, b) => {
+        if (a[sortField] !== undefined && b[sortField] !== undefined) {
+          return a[sortField] - b[sortField];
+        }
+        return 0;
+      });
+    }
+  }
+
+  // 对结果树进行排序
+  resultTree.forEach(node => sortTree(node));
+  resultTree.sort((a, b) => {
+    if (a[sortField] !== undefined && b[sortField] !== undefined) {
+      return a[sortField] - b[sortField];
+    }
+    return 0;
   });
 
   return resultTree;
