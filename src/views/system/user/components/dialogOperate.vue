@@ -12,7 +12,7 @@
         <el-input v-model="ruleForm.email" placeholder="请输入邮箱" />
       </el-form-item>
       <el-form-item label="密码" prop="password" v-if="!data.id">
-        <el-input v-model="ruleForm.password" placeholder="请输入密码" />
+        <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码" show-password />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -24,7 +24,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { postUser, putUser } from "@/api/system/user.js";
+import { addUser, updateUser } from "@/api/system/user.js";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({
@@ -71,7 +71,7 @@ const resetForm = () => {
 // 添加用户
 const fn_postUser = () => {
   const params = ruleForm;
-  postUser(params)
+  addUser(params)
     .then(res => {
       if (res.code == 0) {
         ElMessage({ type: "success", message: "添加成功！" });
@@ -85,7 +85,7 @@ const fn_postUser = () => {
 // 编辑用户
 const fn_putUser = () => {
   const params = ruleForm;
-  putUser(props.data.id, params)
+  updateUser(props.data.id, params)
     .then(res => {
       if (res.code == 0) {
         ElMessage({ type: "success", message: "编辑成功！" });

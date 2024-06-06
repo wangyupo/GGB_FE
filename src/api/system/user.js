@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
-export const getUser = params => {
+export const userList = params => {
   return request({
     url: `${baseURl}/system/user`,
     method: "get",
@@ -9,7 +9,7 @@ export const getUser = params => {
   });
 };
 
-export const postUser = data => {
+export const addUser = data => {
   return request({
     url: `${baseURl}/system/user`,
     method: "post",
@@ -17,7 +17,7 @@ export const postUser = data => {
   });
 };
 
-export const putUser = (id, data) => {
+export const updateUser = (id, data) => {
   return request({
     url: `${baseURl}/system/user/${id}`,
     method: "put",
@@ -42,6 +42,14 @@ export const resetPassword = id => {
 export const changePassword = data => {
   return request({
     url: `${baseURl}/system/user/changePassword`,
+    method: "post",
+    data,
+  });
+};
+
+export const changeStatus = data => {
+  return request({
+    url: `${baseURl}/system/user/changeStatus`,
     method: "post",
     data,
   });

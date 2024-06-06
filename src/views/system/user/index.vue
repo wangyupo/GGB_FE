@@ -14,15 +14,19 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #status="{ scope }">
-        {{ getLabel(StatusOptions, scope.row.status) }}
+        <el-switch
+          v-model="scope.row.status"
+          active-text="启用"
+          inactive-text="禁用"
+          :active-value="1"
+          :inactive-value="2"
+          @change="data => handleChangeStatus(data, scope.row)"
+        />
       </template>
       <template #operate="{ scope }">
-        <el-button type="primary" link @click="showDialog(scope.row)">编辑</el-button>
-        <el-button type="primary" link @click="handleResetPWD(scope.row)">重置密码</el-button>
-        <el-button :type="scope.row.status == 1 ? 'warning' : 'primary'" link @click="handleChangeStatus(scope.row)">
-          {{ scope.row.status == 1 ? "禁用" : "启用" }}
-        </el-button>
-        <el-button type="danger" link @click="handleDel(scope.row)">删除</el-button>
+        <el-button type="primary" link icon="Edit" @click="showDialog(scope.row)">编辑</el-button>
+        <el-button type="primary" link icon="RefreshLeft" @click="handleResetPWD(scope.row)">重置密码</el-button>
+        <el-button type="danger" link icon="Delete" @click="handleDel(scope.row)">删除</el-button>
       </template>
     </RhTable>
 
@@ -38,9 +42,8 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData, getLabel } from "@/utils/index.js";
-import { getUser, putUser, resetPassword, deleteUser } from "@/api/system/user.js";
-import { StatusOptions } from "@/enums/index.js";
+import { initSearchData } from "@/utils/index.js";
+import { userList, resetPassword, deleteUser, changeStatus } from "@/api/system/user.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import DialogOperate from "./components/dialogOperate.vue";
 
@@ -63,7 +66,8 @@ const searchInfo = ref([
     placeholder: "请输入用户名",
     key: "userName",
     value: "",
-    colSpan: 4,
+    defaultValue: "",
+    colSpan: 8,
   },
 ]);
 // 表格配置
@@ -105,7 +109,7 @@ const fn_getList = pageNumber => {
     },
     searchForm.value
   );
-  getUser(params)
+  userList(params)
     .then(res => {
       if (res.code == 0) {
         tableData.data = res.data.list;
@@ -146,20 +150,21 @@ const handleResetPWD = row => {
 };
 
 // 启用/禁用
-const handleChangeStatus = row => {
-  ElMessageBox.confirm(`确认${row.status == 1 ? "禁用" : "启用"}用户 ${row.userName}??`, "系统提示", {
+const handleChangeStatus = (status, row) => {
+  ElMessageBox.confirm(`确认${status == 1 ? "启用" : "禁用"}用户 ${row.userName}?`, "系统提示", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
       const params = {
-        status: row.status == 1 ? 2 : 1,
+        id: row.id,
+        status: status,
       };
-      putUser(row.id, params)
+      changeStatus(params)
         .then(res => {
-          if (res.code == 200) {
-            ElMessage({ type: "success", message: `${row.userName}${row.status ? "禁用" : "启用"}成功！` });
+          if (res.code == 0) {
+            ElMessage({ type: "success", message: `${row.userName} ${status == 1 ? "启用" : "禁用"}成功！` });
           }
         })
         .catch(() => {})
