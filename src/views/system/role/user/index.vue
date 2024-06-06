@@ -1,11 +1,10 @@
 <template>
-  <!-- 角色管理-分配用户 -->
+  <!-- 角色绑定用户 -->
   <div>
-    <RhSearch :searchInfo="searchInfo" :searchForm="searchForm" @search="handleSearch">
-      <template #right-slot>
-        <el-button type="primary" @click="showDialog">添加用户</el-button>
-      </template>
-    </RhSearch>
+    <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
+    <div class="flex justify-end mb-3">
+      <el-button type="primary" icon="Plus" @click="showDialog">添加用户</el-button>
+    </div>
     <RhTable
       border
       stripe
@@ -15,65 +14,47 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #status="{ scope }">
-        <el-tag v-if="scope.row.status">启用</el-tag>
-        <el-tag type="danger" v-else>已禁用</el-tag>
+        {{ getLabel(StatusOptions, scope.row.status) }}
       </template>
       <template #operate="{ scope }">
-        <el-button type="danger" link @click="handleDel(scope.row)">删除</el-button>
+        <el-button type="danger" link @click="handleCancel(scope.row)">取消绑定</el-button>
       </template>
     </RhTable>
 
-    <AddDialog
-      v-model="dialogVisible"
-      :title="`${role.id ? '编辑' : '添加'}用户`"
-      width="700px"
-      :data="role"
-      :menu="menu"
-      @close="fn_getList"
-    />
+    <!-- 弹窗-添加用户 -->
+    <DialogUserList v-model="dialogVisible" title="添加用户" width="800px" @closed="fn_getList(1)" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { getRoleUser, deleteRoleUser } from "@/api/roleUser.js";
-import AddDialog from "./components/addDialog.vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { initSearchData, getLabel } from "@/utils/index.js";
+import { StatusOptions } from "@/enums/index.js";
+import { getUserByRole, unAssignUser } from "@/api/system/role.js";
 import { useRoute } from "vue-router";
-
-const route = useRoute();
-const role = ref({});
-const menu = ref([]);
+import { ElMessage, ElMessageBox } from "element-plus";
+import DialogUserList from "./components/dialogUserList.vue";
 
 /** 弹窗 START **/
 const dialogVisible = ref(false); // 弹窗显示/隐藏
 
 // 显示弹窗
-const showDialog = row => {
-  role.value = row;
+const showDialog = () => {
   dialogVisible.value = true;
 };
 /** 弹窗 END **/
 
+const route = useRoute();
 // 条件配置
-const searchForm = ref({
-  userName: "",
-  email: "",
-});
+const searchForm = ref({});
 const searchInfo = ref([
   {
     type: "input",
     placeholder: "请输入用户名",
     key: "userName",
     value: "",
-    colSpan: 4,
-  },
-  {
-    type: "input",
-    placeholder: "请输入用户邮箱",
-    key: "email",
-    value: "",
-    colSpan: 4,
+    defaultValue: "",
+    colSpan: 8,
   },
 ]);
 // 表格配置
@@ -81,16 +62,21 @@ const tableData = reactive({
   showOverflowTooltip: true,
   columns: [
     { label: "序号", type: "index" },
-    { label: "用户名称", prop: "userName", width: "120px" },
-    { label: "用户邮箱", prop: "email", minWidth: "120px" },
-    { label: "操作", prop: "operate", width: "200px" },
+    { label: "姓名", prop: "userName", width: "120px" },
+    { label: "昵称", prop: "nickName", width: "120px" },
+    { label: "邮箱", prop: "email", minWidth: "120px" },
+    { label: "状态", prop: "status", width: "120px" },
+    { label: "添加时间", prop: "createdAt", dataType: "date", minWidth: "120px" },
+    { label: "操作", prop: "operate", fixed: "right", width: "200px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
 });
-const loading = ref(false);
+const loading = ref(false); // 加载状态
 
+// 组件挂载完成后执行
 onMounted(() => {
+  searchForm.value = initSearchData(searchInfo.value);
   fn_getList();
 });
 
@@ -105,17 +91,17 @@ const fn_getList = pageNumber => {
   loading.value = true;
   const params = Object.assign(
     {
-      role_id: route.query.roleId,
+      roleId: route.query.roleId,
       pageNumber: pageNumber ? pageNumber : tableData.pages.pageNumber,
       pageSize: tableData.pages.pageSize,
     },
     searchForm.value
   );
-  getRoleUser(params)
+  getUserByRole(params)
     .then(res => {
-      if (res.code == 200) {
-        tableData.data = res.data;
-        tableData.pages.total = res.total;
+      if (res.code == 0) {
+        tableData.data = res.data.list;
+        tableData.pages.total = res.data.total;
         tableData.pages.pageNumber = params.pageNumber;
       }
     })
@@ -130,23 +116,30 @@ const pageSizeChange = pageSize => {
   fn_getList(1);
 };
 
-// 删除用户
-const handleDel = row => {
-  ElMessageBox.confirm(`确认移除用户${row.userName}?`, "系统提示", {
+// 取消绑定
+const handleCancel = row => {
+  ElMessageBox.confirm(`确认将 ${row.userName} 取消绑定该角色?`, "系统提示", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-      deleteRoleUser(row.id)
+      loading.value = true;
+      const params = {
+        roleId: parseInt(route.query.roleId),
+        userIds: [row.id],
+      };
+      unAssignUser(params)
         .then(res => {
-          if (res.code == 200) {
-            ElMessage({ type: "success", message: `用户${row.userName}移除成功！` });
+          if (res.code == 0) {
+            ElMessage({ type: "success", message: `${row.userName} 取消绑定成功！` });
             fn_getList();
           }
         })
         .catch(() => {})
-        .finally(() => {});
+        .finally(() => {
+          loading.value = false;
+        });
     })
     .catch(() => {});
 };

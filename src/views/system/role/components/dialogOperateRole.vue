@@ -11,18 +11,17 @@
       <el-form-item label="角色描述" prop="description">
         <el-input v-model="ruleForm.description" placeholder="请输入角色描述" />
       </el-form-item>
-      <el-form-item label="菜单" prop="">
-        <el-tree
-          show-checkbox
-          default-expand-all
-          node-key="id"
-          check-strictly
-          ref="treeRef"
-          :data="menu"
-          @check="handleCheckMenu"
+      <el-form-item label="角色状态" prop="status">
+        <el-switch
+          v-model="ruleForm.status"
+          active-text="启用"
+          inactive-text="禁用"
+          :active-value="1"
+          :inactive-value="2"
         />
       </el-form-item>
     </el-form>
+
     <template #footer>
       <el-button type="primary" @click="submitForm">确认</el-button>
       <el-button @click="closed">取消</el-button>
@@ -40,13 +39,7 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
-  menu: {
-    type: Array,
-    default: () => [],
-  },
 });
-
-const treeRef = ref();
 
 /** el-form START **/
 const ruleFormRef = ref();
@@ -54,13 +47,12 @@ const ruleForm = reactive({
   roleName: "",
   roleCode: "",
   description: "",
-  status: true,
+  status: 1,
 });
 const rules = reactive({
   roleName: [{ required: true, message: "请输入角色名", trigger: "blur" }],
   roleCode: [{ required: true, message: "请输入角色标识", trigger: "blur" }],
 });
-const menu_ids = ref([]);
 
 // 提交表单
 const submitForm = async () => {
@@ -83,20 +75,12 @@ const resetForm = () => {
   ruleFormRef.value.resetFields();
 };
 
-// 选择菜单
-const handleCheckMenu = () => {
-  menu_ids.value = treeRef.value.getCheckedKeys();
-};
-
 // 添加角色
 const fn_postRole = () => {
-  const params = {
-    role: ruleForm,
-    menu_ids: menu_ids.value,
-  };
+  const params = ruleForm;
   addRole(params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "添加成功！" });
         dialogVisible.value = false;
       }
@@ -107,13 +91,10 @@ const fn_postRole = () => {
 
 // 编辑角色
 const fn_putRole = () => {
-  const params = {
-    role: Object.assign({ id: props.data.id }, ruleForm),
-    menu_ids: menu_ids.value,
-  };
-  updateRole(params)
+  const params = ruleForm;
+  updateRole(props.data.id, params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "编辑成功！" });
         dialogVisible.value = false;
       }
@@ -128,15 +109,13 @@ const emits = defineEmits(["opened", "closed"]);
 const dialogVisible = defineModel();
 
 // 弹窗开启
-const opened = () => {
+const opened = async () => {
   if (props.data.id) {
     for (const key in ruleForm) {
       if (Object.hasOwnProperty.call(ruleForm, key)) {
         ruleForm[key] = props.data[key];
       }
     }
-    menu_ids.value = props.data.menu_ids;
-    treeRef.value.setCheckedKeys(props.data.menu_ids);
   }
   emits("opened");
 };
@@ -151,8 +130,6 @@ const closed = () => {
 // 重置数据
 const resetData = () => {
   resetForm(ruleFormRef.value);
-  menu_ids.value = [];
-  treeRef.value.setCheckedKeys([]);
 };
 /** dialog END **/
 </script>

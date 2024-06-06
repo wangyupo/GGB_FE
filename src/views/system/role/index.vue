@@ -2,6 +2,9 @@
   <!-- 角色管理 -->
   <div>
     <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
+    <div class="flex justify-end mb-3">
+      <el-button type="primary" icon="Plus" @click="showDialog">添加角色</el-button>
+    </div>
     <RhTable
       border
       stripe
@@ -11,44 +14,59 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #status="{ scope }">
-        {{ getLabel(StatusOptions, scope.row.status) }}
+        <el-switch
+          v-model="scope.row.status"
+          active-text="启用"
+          inactive-text="禁用"
+          :active-value="1"
+          :inactive-value="2"
+          @change="data => handleChangeStatus(data, scope.row)"
+        />
       </template>
       <template #operate="{ scope }">
-        <el-button type="primary" link @click="handleSetUser(scope.row)">分配用户</el-button>
-        <el-button type="primary" link @click="showDialog(scope.row)">编辑</el-button>
-        <!-- <el-button :type="scope.row.status ? 'danger' : 'primary'" link @click="handleChangeStatus(scope.row)">
-          {{ scope.row.status ? "禁用" : "启用" }}
-        </el-button> -->
+        <el-button type="primary" link icon="Edit" @click="showDialog(scope.row)">编辑角色</el-button>
+        <el-button type="primary" link icon="Menu" @click="showAssignMenuDialog(scope.row)">分配菜单</el-button>
+        <el-button type="primary" link icon="User" @click="handleSetUser(scope.row)">分配用户</el-button>
+        <el-button type="primary" link icon="Edit" @click="handleDel(scope.row)">删除角色</el-button>
       </template>
     </RhTable>
 
-    <DialogOperate
+    <!-- 弹窗-添加/编辑角色 -->
+    <DialogOperateRole
       v-model="dialogVisible"
       :title="`${detail.id ? '编辑' : '添加'}角色`"
       width="700px"
       :data="detail"
       @close="fn_getList"
     />
+    <!-- 弹窗-分配菜单 -->
+    <DialogAssignMenu v-model="dialogAssignMenuVisible" title="分配菜单" width="700px" :data="detail" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData, getLabel } from "@/utils/index.js";
-import { roleList, deleteRole } from "@/api/system/role.js";
-import { StatusOptions } from "@/enums/index.js";
-import DialogOperate from "./components/dialogOperate.vue";
+import { initSearchData } from "@/utils/index.js";
+import { roleList, deleteRole, changeStatus } from "@/api/system/role.js";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
+import DialogOperateRole from "./components/dialogOperateRole.vue";
+import DialogAssignMenu from "./components/dialogAssignMenu.vue";
 
 const router = useRouter();
 /** 弹窗 START **/
 const dialogVisible = ref(false); // 弹窗显示/隐藏
+const dialogAssignMenuVisible = ref(false); // 弹窗显示/隐藏
 const detail = ref({});
 
 // 显示弹窗
 const showDialog = (row = {}) => {
   detail.value = row;
   dialogVisible.value = true;
+};
+const showAssignMenuDialog = (row = {}) => {
+  detail.value = row;
+  dialogAssignMenuVisible.value = true;
 };
 /** 弹窗 END **/
 
@@ -57,22 +75,10 @@ const searchForm = ref({});
 const searchInfo = ref([
   {
     type: "input",
-    label: "名称",
-    placeholder: "请输入名称",
-    key: "name",
+    label: "角色名称",
+    placeholder: "请输入角色名称",
+    key: "roleName",
     defaultValue: "",
-    colSpan: 8,
-  },
-  {
-    type: "select",
-    label: "类型",
-    placeholder: "请选择类型",
-    key: "type",
-    defaultValue: "",
-    options: [
-      { value: "1", label: "选项一" },
-      { value: "2", label: "选项二" },
-    ],
     colSpan: 8,
   },
 ]);
@@ -83,9 +89,9 @@ const tableData = reactive({
     { label: "序号", type: "index" },
     { label: "角色名", prop: "roleName", width: "120px" },
     { label: "角色标识码", prop: "roleCode", width: "120px" },
-    { label: "角色状态", prop: "status", minWidth: "120px" },
     { label: "角色描述", prop: "description", minWidth: "120px" },
-    { label: "操作", prop: "operate", width: "200px" },
+    { label: "角色状态", prop: "status", width: "160px" },
+    { label: "操作", prop: "operate", width: "400px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
@@ -134,31 +140,51 @@ const pageSizeChange = pageSize => {
 };
 
 // 启用/禁用
-const handleChangeStatus = row => {
-  // const params = {
-  //   id: row.id,
-  //   status: !row.status,
-  // };
-  // changeRoleStatus(params)
-  //   .then(res => {
-  //     if (res.code == 200) {
-  //       ElMessage({ type: "success", message: `${row.roleName}${row.status ? "禁用" : "启用"}成功！` });
-  //     }
-  //   })
-  //   .catch(() => {})
-  //   .finally(() => {
-  //     fn_getList();
-  //   });
+const handleChangeStatus = (status, row) => {
+  const params = {
+    id: row.id,
+    status: status,
+  };
+  changeStatus(params)
+    .then(res => {
+      if (res.code == 0) {
+        ElMessage({ type: "success", message: `角色 ${row.roleName} ${status == 1 ? "启用" : "禁用"}成功！` });
+      }
+    })
+    .catch(() => {})
+    .finally(() => {
+      fn_getList();
+    });
 };
 
 // 分配用户
 const handleSetUser = row => {
   router.push({
     path: "/system/role/user",
-    query: {
-      roleId: row.id,
-    },
+    query: { roleId: row.id },
   });
+};
+
+// 删除角色
+const handleDel = row => {
+  ElMessageBox.confirm(`确认删除角色 ${row.roleName}?`, "系统提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      const params = row.id;
+      deleteRole(params)
+        .then(res => {
+          if (res.code == 0) {
+            ElMessage({ type: "success", message: `角色 ${row.roleName} 删除成功！` });
+            fn_getList();
+          }
+        })
+        .catch(() => {})
+        .finally(() => {});
+    })
+    .catch(() => {});
 };
 </script>
 
