@@ -40,10 +40,9 @@ export const moveMenu = data => {
   });
 };
 
-export const getMenuByRole = params => {
+export const getMenuByRole = id => {
   return request({
-    url: `${baseURl}/system/menu/role`,
+    url: `${baseURl}/system/menu/getMenuByRole/${id}`,
     method: "get",
-    params,
   });
 };
