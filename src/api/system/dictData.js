@@ -24,3 +24,10 @@ export const updateDictData = (id, data) => {
     data,
   });
 };
+
+export const deleteDictData = id => {
+  return request({
+    url: `${baseURl}/system/dictData/${id}`,
+    method: "delete",
+  });
+};

@@ -2,8 +2,8 @@
   <!-- 弹窗-添加数据字典 -->
   <el-dialog v-model="dialogVisible" v-bind="$attrs" @opened="opened" @closed="closed">
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" status-icon>
-      <el-form-item label="字典键" prop="key">
-        <el-input v-model="ruleForm.key" placeholder="请输入字典键" />
+      <el-form-item label="字典键" prop="label">
+        <el-input v-model="ruleForm.label" placeholder="请输入字典键" />
       </el-form-item>
       <el-form-item label="字典值" prop="value">
         <el-input v-model="ruleForm.value" placeholder="请输入字典值" />
@@ -36,15 +36,14 @@ const props = defineProps({
 /** el-form START **/
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  categoryID: route.query.id,
-  key: "",
+  categoryId: parseInt(route.query.id),
+  label: "",
   value: "",
   description: "",
 });
 const rules = reactive({
-  key: [{ required: true, message: "请输入字典键", trigger: "blur" }],
+  label: [{ required: true, message: "请输入字典键", trigger: "blur" }],
   value: [{ required: true, message: "请输入字典值", trigger: "blur" }],
-  // description: [{ required: true, message: "请输入字典描述", trigger: "blur" }],
 });
 
 // 提交表单
@@ -54,20 +53,20 @@ const submitForm = async formEl => {
     if (valid) {
       // do something
       if (props.data.id) {
-        fn_putDict();
+        fn_updateDictData();
         return;
       }
-      fn_postDict();
+      fn_addDictData();
     }
   });
 };
 
 // 添加字典
-const fn_postDict = () => {
+const fn_addDictData = () => {
   const params = ruleForm;
   addDictData(params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "添加成功！" });
         dialogVisible.value = false;
       }
@@ -77,11 +76,11 @@ const fn_postDict = () => {
 };
 
 // 编辑字典
-const fn_putDict = () => {
+const fn_updateDictData = () => {
   const params = ruleForm;
   updateDictData(props.data.id, params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "编辑成功！" });
         dialogVisible.value = false;
       }

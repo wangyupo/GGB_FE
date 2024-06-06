@@ -1,11 +1,10 @@
 <template>
-  <!-- 数据字典 -->
+  <!-- 字典管理 -->
   <div>
-    <RhSearch :searchInfo="searchInfo" :searchForm="searchForm" @search="handleSearch">
-      <template #right-slot>
-        <el-button type="primary" @click="showDialog">添加字典</el-button>
-      </template>
-    </RhSearch>
+    <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
+    <div class="flex justify-end mb-3">
+      <el-button type="primary" icon="Plus" @click="showDialog">添加字典</el-button>
+    </div>
     <RhTable
       border
       stripe
@@ -15,47 +14,61 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #operate="{ scope }">
-        <el-button type="primary" link @click="showDialog(scope.row)">编辑</el-button>
-        <el-button type="primary" link @click="handleList(scope.row)">列表</el-button>
-        <el-button type="primary" link @click="handleDel(scope.row)">删除</el-button>
+        <el-button type="primary" link icon="Edit" @click="showDialog(scope.row)">编辑</el-button>
+        <el-button type="primary" link icon="Coin" @click="handleList(scope.row)">数据</el-button>
+        <el-button type="primary" link icon="Delete" @click="handleDel(scope.row)">删除</el-button>
       </template>
     </RhTable>
 
-    <AddDialog v-model="dialogVisible" title="添加字典" width="700px" :data="dict" @close="fn_getList" />
+    <!-- 弹窗-添加/编辑字典 -->
+    <DialogOperate
+      v-model="dialogVisible"
+      :title="(detail.id ? '编辑' : '添加') + '字典'"
+      width="700px"
+      :data="detail"
+      @close="fn_getList"
+    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
+import { initSearchData } from "@/utils/index.js";
 import { dictCategoryList, deleteDictCategoryList } from "@/api/system/dictCategory.js";
-import AddDialog from "./components/addDialog.vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
+import DialogOperate from "./components/dialogOperate.vue";
 
 const router = useRouter();
-const dict = ref({});
-
 /** 弹窗 START **/
 const dialogVisible = ref(false); // 弹窗显示/隐藏
+const detail = ref({});
 
 // 显示弹窗
 const showDialog = row => {
-  if (row) dict.value = row;
+  if (row) detail.value = row;
   dialogVisible.value = true;
 };
 /** 弹窗 END **/
 
 // 条件配置
-const searchForm = ref({
-  name: "",
-});
+const searchForm = ref({});
 const searchInfo = ref([
   {
     type: "input",
+    label: "字典名称",
     placeholder: "请输入字典名称",
-    key: "name",
-    value: "",
-    colSpan: 4,
+    key: "label",
+    defaultValue: "",
+    colSpan: 8,
+  },
+  {
+    type: "input",
+    label: "字典编码",
+    placeholder: "请输入字典编码",
+    key: "labelCode",
+    defaultValue: "",
+    colSpan: 8,
   },
 ]);
 // 表格配置
@@ -63,16 +76,19 @@ const tableData = reactive({
   showOverflowTooltip: true,
   columns: [
     { label: "序号", type: "index" },
-    { label: "字典名称", prop: "name", width: "120px" },
+    { label: "字典名称", prop: "label", width: "120px" },
+    { label: "字典编码", prop: "labelCode", width: "120px" },
     { label: "字典描述", prop: "description", minWidth: "120px" },
-    { label: "操作", prop: "operate", width: "200px" },
+    { label: "操作", prop: "operate", fixed: "right", width: "260px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
 });
-const loading = ref(false);
+const loading = ref(false); // 加载状态
 
+// 组件挂载完成后执行
 onMounted(() => {
+  searchForm.value = initSearchData(searchInfo.value);
   fn_getList();
 });
 
@@ -83,21 +99,21 @@ const handleSearch = params => {
 };
 
 // 列表查询
-const fn_getList = pageNum => {
+const fn_getList = pageNumber => {
   loading.value = true;
   const params = Object.assign(
     {
-      pageNum: pageNum ? pageNum : tableData.pages.pageNum,
+      pageNumber: pageNumber ? pageNumber : tableData.pages.pageNumber,
       pageSize: tableData.pages.pageSize,
     },
     searchForm.value
   );
   dictCategoryList(params)
     .then(res => {
-      if (res.code == 200) {
-        tableData.data = res.data;
-        tableData.pages.total = res.total;
-        tableData.pages.pageNum = params.pageNum;
+      if (res.code == 0) {
+        tableData.data = res.data.list;
+        tableData.pages.total = res.data.total;
+        tableData.pages.pageNumber = params.pageNumber;
       }
     })
     .finally(() => {
@@ -111,19 +127,9 @@ const pageSizeChange = pageSize => {
   fn_getList(1);
 };
 
-// 字典列表
-const handleList = row => {
-  router.push({
-    path: "/system/dict/data",
-    query: {
-      id: row.id,
-    },
-  });
-};
-
 // 删除字典
 const handleDel = row => {
-  ElMessageBox.confirm(`确认删除${row.name}?`, "系统提示", {
+  ElMessageBox.confirm(`确认删除字典 ${row.label}?`, "系统提示", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning",
@@ -131,8 +137,8 @@ const handleDel = row => {
     .then(() => {
       deleteDictCategoryList(row.id)
         .then(res => {
-          if (res.code == 200) {
-            ElMessage({ type: "success", message: `${row.name}删除成功！` });
+          if (res.code == 0) {
+            ElMessage({ type: "success", message: `字典 ${row.label} 删除成功！` });
             fn_getList();
           }
         })
@@ -140,6 +146,14 @@ const handleDel = row => {
         .finally(() => {});
     })
     .catch(() => {});
+};
+
+// 字典列表
+const handleList = row => {
+  router.push({
+    path: "/system/dict/data",
+    query: { id: row.id },
+  });
 };
 </script>
 

@@ -2,8 +2,11 @@
   <!-- 弹窗-添加数据字典 -->
   <el-dialog v-model="dialogVisible" v-bind="$attrs" @opened="opened" @closed="closed">
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" status-icon>
-      <el-form-item label="字典名称" prop="name">
-        <el-input v-model="ruleForm.name" placeholder="请输入字典名称" />
+      <el-form-item label="字典名称" prop="label">
+        <el-input v-model="ruleForm.label" placeholder="请输入字典名称" />
+      </el-form-item>
+      <el-form-item label="字典编码" prop="labelCode">
+        <el-input v-model="ruleForm.labelCode" placeholder="请输入字典编码" />
       </el-form-item>
       <el-form-item label="字典描述" prop="description">
         <el-input v-model="ruleForm.description" placeholder="请输入字典描述" />
@@ -31,11 +34,13 @@ const props = defineProps({
 /** el-form START **/
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  name: "",
+  label: "",
+  labelCode: "",
   description: "",
 });
 const rules = reactive({
-  name: [{ required: true, message: "请输入字典名称", trigger: "blur" }],
+  label: [{ required: true, message: "请输入字典名称", trigger: "blur" }],
+  labelCode: [{ required: true, message: "请输入字典编码", trigger: "blur" }],
 });
 
 // 提交表单
@@ -45,20 +50,20 @@ const submitForm = async () => {
     if (valid) {
       // do something
       if (props.data.id) {
-        fn_putDict();
+        fn_updateDictCategoryList();
         return;
       }
-      fn_postDict();
+      fn_addDictCategoryList();
     }
   });
 };
 
 // 添加字典
-const fn_postDict = () => {
+const fn_addDictCategoryList = () => {
   const params = ruleForm;
   addDictCategoryList(params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "添加成功！" });
         dialogVisible.value = false;
       }
@@ -68,11 +73,11 @@ const fn_postDict = () => {
 };
 
 // 编辑字典
-const fn_putDict = () => {
+const fn_updateDictCategoryList = () => {
   const params = ruleForm;
   updateDictCategoryList(props.data.id, params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
         ElMessage({ type: "success", message: "编辑成功！" });
         dialogVisible.value = false;
       }

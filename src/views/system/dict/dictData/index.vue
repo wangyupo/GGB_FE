@@ -1,11 +1,10 @@
 <template>
   <!-- 字典数据 -->
   <div>
-    <RhSearch :searchInfo="searchInfo" :searchForm="searchForm" @search="handleSearch">
-      <template #right-slot>
-        <el-button type="primary" @click="showDialog">添加数据</el-button>
-      </template>
-    </RhSearch>
+    <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
+    <div class="flex justify-end mb-3">
+      <el-button type="primary" icon="Plus" @click="showDialog">添加数据</el-button>
+    </div>
     <RhTable
       border
       stripe
@@ -15,44 +14,52 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #operate="{ scope }">
-        <el-button type="primary" link @click="showDialog(scope.row)">编辑</el-button>
+        <el-button type="primary" link icon="Edit" @click="showDialog(scope.row)">编辑</el-button>
+        <el-button type="danger" link icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
       </template>
     </RhTable>
 
-    <AddDialog v-model="dialogVisible" title="自定义标题" width="700px" :data="dictData" @close="fn_getList" />
+    <!-- 弹窗-用途 -->
+    <DialogOperate
+      v-model="dialogVisible"
+      :title="(detail.id ? '编辑' : '添加') + '数据'"
+      width="700px"
+      :data="detail"
+      @closed="fn_getList"
+    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { dictDataList } from "@/api/system/dictData.js";
-import AddDialog from "./components/addDialog.vue";
+import { initSearchData } from "@/utils/index.js";
+import { dictDataList, deleteDictData } from "@/api/system/dictData.js";
 import { useRoute } from "vue-router";
-
-const route = useRoute();
-const dictData = ref({});
+import DialogOperate from "./components/dialogOperate.vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 /** 弹窗 START **/
 const dialogVisible = ref(false); // 弹窗显示/隐藏
+const detail = ref({});
 
 // 显示弹窗
-const showDialog = row => {
-  if (row) dictData.value = row;
+const showDialog = (row = {}) => {
+  detail.value = row;
   dialogVisible.value = true;
 };
 /** 弹窗 END **/
 
+const route = useRoute();
 // 条件配置
-const searchForm = ref({
-  key: "",
-});
+const searchForm = ref({});
 const searchInfo = ref([
   {
     type: "input",
+    label: "字典键",
     placeholder: "请输入字典键",
-    key: "key",
-    value: "",
-    colSpan: 4,
+    key: "label",
+    defaultValue: "",
+    colSpan: 8,
   },
 ]);
 // 表格配置
@@ -60,17 +67,19 @@ const tableData = reactive({
   showOverflowTooltip: true,
   columns: [
     { label: "序号", type: "index" },
-    { label: "字典键", prop: "key", width: "120px" },
+    { label: "字典键", prop: "label", width: "120px" },
     { label: "字典值", prop: "value", width: "120px" },
     { label: "字典项描述", prop: "description", minWidth: "120px" },
-    { label: "操作", prop: "operate", width: "200px" },
+    { label: "操作", prop: "operate", fixed: "right", width: "200px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
 });
-const loading = ref(false);
+const loading = ref(false); // 加载状态
 
+// 组件挂载完成后执行
 onMounted(() => {
+  searchForm.value = initSearchData(searchInfo.value);
   fn_getList();
 });
 
@@ -83,7 +92,6 @@ const handleSearch = params => {
 // 列表查询
 const fn_getList = pageNumber => {
   loading.value = true;
-  
   const params = Object.assign(
     {
       categoryId: route.query.id,
@@ -94,9 +102,9 @@ const fn_getList = pageNumber => {
   );
   dictDataList(params)
     .then(res => {
-      if (res.code == 200) {
-        tableData.data = res.data;
-        tableData.pages.total = res.total;
+      if (res.code == 0) {
+        tableData.data = res.data.list;
+        tableData.pages.total = res.data.total;
         tableData.pages.pageNumber = params.pageNumber;
       }
     })
@@ -109,6 +117,28 @@ const fn_getList = pageNumber => {
 const pageSizeChange = pageSize => {
   tableData.pages.pageSize = pageSize;
   fn_getList(1);
+};
+
+// 删除
+const handleDelete = row => {
+  ElMessageBox.confirm(`确认删除数据项 ${row.label}?`, "系统提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      const params = row.id;
+      deleteDictData(params)
+        .then(res => {
+          if (res.code == 0) {
+            ElMessage({ type: "success", message: `数据项 ${row.label} 删除成功！` });
+            fn_getList();
+          }
+        })
+        .catch(() => {})
+        .finally(() => {});
+    })
+    .catch(() => {});
 };
 </script>
 
