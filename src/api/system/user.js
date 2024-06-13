@@ -1,6 +1,7 @@
 import request from "@/utils/request";
 const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
+// 用户管理-列表
 export const userList = params => {
   return request({
     url: `${baseURl}/system/user`,
@@ -9,6 +10,7 @@ export const userList = params => {
   });
 };
 
+// 用户管理-添加
 export const addUser = data => {
   return request({
     url: `${baseURl}/system/user`,
@@ -17,14 +19,16 @@ export const addUser = data => {
   });
 };
 
-export const updateUser = (id, data) => {
+// 用户管理-编辑
+export const updateUser = data => {
   return request({
-    url: `${baseURl}/system/user/${id}`,
+    url: `${baseURl}/system/user`,
     method: "put",
     data,
   });
 };
 
+// 用户管理-删除
 export const deleteUser = id => {
   return request({
     url: `${baseURl}/system/user/${id}`,
@@ -32,25 +36,28 @@ export const deleteUser = id => {
   });
 };
 
+// 用户管理-重置密码
 export const resetPassword = id => {
   return request({
-    url: `${baseURl}/system/user/resetPassword/${id}`,
-    method: "put",
+    url: `${baseURl}/system/user/${id}/reset-password`,
+    method: "patch",
   });
 };
 
-export const changePassword = data => {
+// 用户管理-修改密码
+export const changePassword = (id, data) => {
   return request({
-    url: `${baseURl}/system/user/changePassword`,
-    method: "post",
+    url: `${baseURl}/system/user/${id}/password`,
+    method: "patch",
     data,
   });
 };
 
-export const changeStatus = data => {
+// 用户管理-修改状态
+export const changeStatus = (id, data) => {
   return request({
-    url: `${baseURl}/system/user/changeStatus`,
-    method: "post",
+    url: `${baseURl}/system/user/${id}/status`,
+    method: "patch",
     data,
   });
 };

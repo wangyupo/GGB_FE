@@ -2,8 +2,8 @@
   <!-- 弹窗-修改登录密码 -->
   <el-dialog v-model="dialogVisible" v-bind="$attrs" @opened="opened" @closed="closed">
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" status-icon>
-      <el-form-item label="旧密码" prop="oldPassword">
-        <el-input type="password" v-model="ruleForm.oldPassword" placeholder="请输入" />
+      <el-form-item label="旧密码" prop="password">
+        <el-input type="password" v-model="ruleForm.password" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="新密码" prop="newPassword">
         <el-input type="password" v-model="ruleForm.newPassword" placeholder="请输入" />
@@ -21,7 +21,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { changePwd } from "@/api/user.js";
+import { changePassword } from "@/api/system/user.js";
 import { logout } from "@/api/login.js";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
@@ -32,7 +32,7 @@ const router = useRouter();
 /** el-form START **/
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  oldPassword: "",
+  password: "",
   newPassword: "",
   rePassword: "",
 });
@@ -46,7 +46,7 @@ const validatePass = (rule, value, callback) => {
   }
 };
 const rules = reactive({
-  oldPassword: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+  password: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
   newPassword: [{ required: true, message: "请输入新密码", trigger: "blur" }],
   rePassword: [{ required: true, validator: validatePass, trigger: "blur" }],
 });
@@ -65,12 +65,13 @@ const submitForm = async () => {
 // 修改密码
 const fn_changePwd = () => {
   const params = {
-    oldPassword: ruleForm.oldPassword,
+    password: ruleForm.password,
     newPassword: ruleForm.newPassword,
   };
-  changePwd(params)
+  changePassword(params)
     .then(res => {
-      if (res.code == 200) {
+      if (res.code == 0) {
+        ElMessage({ type: "success", message: "密码修改成功，请重新登录！" });
         fn_logout();
       }
     })
@@ -82,15 +83,12 @@ const fn_changePwd = () => {
 const fn_logout = () => {
   logout()
     .then(res => {
-      console.log(res);
-      if (res.code == 200) {
-        ElMessage({ type: "success", message: "密码修改成功，请重新登录！" });
+      if (res.code == 0) {
         dialogVisible.value = false;
         removeAllLoginInfo();
         router.replace({
           path: "/login",
         });
-        
       }
     })
     .catch(() => {})

@@ -136,8 +136,7 @@ const handleResetPWD = row => {
     type: "warning",
   })
     .then(() => {
-      const params = row.id;
-      resetPassword(params)
+      resetPassword(row.id)
         .then(res => {
           if (res.code == 0) {
             ElMessage({ type: "success", message: "密码重置成功！" });
@@ -158,10 +157,9 @@ const handleChangeStatus = (status, row) => {
   })
     .then(() => {
       const params = {
-        id: row.id,
         status: status,
       };
-      changeStatus(params)
+      changeStatus(row.id, params)
         .then(res => {
           if (res.code == 0) {
             ElMessage({ type: "success", message: `${row.userName} ${status == 1 ? "启用" : "禁用"}成功！` });
