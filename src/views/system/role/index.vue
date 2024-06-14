@@ -142,10 +142,9 @@ const pageSizeChange = pageSize => {
 // 启用/禁用
 const handleChangeStatus = (status, row) => {
   const params = {
-    id: row.id,
     status: status,
   };
-  changeStatus(params)
+  changeStatus(row.id, params)
     .then(res => {
       if (res.code == 0) {
         ElMessage({ type: "success", message: `角色 ${row.roleName} ${status == 1 ? "启用" : "禁用"}成功！` });

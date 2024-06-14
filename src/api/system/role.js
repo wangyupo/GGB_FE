@@ -1,6 +1,7 @@
 import request from "@/utils/request";
 const baseURl = import.meta.env.VITE_SYSTEM_BASE_URL;
 
+// 角色管理-列表
 export const roleList = params => {
   return request({
     url: `${baseURl}/system/role`,
@@ -9,6 +10,7 @@ export const roleList = params => {
   });
 };
 
+// 角色管理-添加
 export const addRole = data => {
   return request({
     url: `${baseURl}/system/role`,
@@ -17,6 +19,7 @@ export const addRole = data => {
   });
 };
 
+// 角色管理-更新
 export const updateRole = (id, data) => {
   return request({
     url: `${baseURl}/system/role/${id}`,
@@ -25,6 +28,7 @@ export const updateRole = (id, data) => {
   });
 };
 
+// 角色管理-删除
 export const deleteRole = id => {
   return request({
     url: `${baseURl}/system/role/${id}`,
@@ -32,38 +36,43 @@ export const deleteRole = id => {
   });
 };
 
-export const changeStatus = data => {
+// 角色管理-启用/禁用
+export const changeStatus = (id, data) => {
   return request({
-    url: `${baseURl}/system/role/changeStatus`,
-    method: "post",
+    url: `${baseURl}/system/role/${id}/status`,
+    method: "patch",
     data,
   });
 };
 
+// 角色管理-绑定菜单
 export const assignMenu = data => {
   return request({
-    url: `${baseURl}/system/role/assignMenu`,
+    url: `${baseURl}/system/role/menu`,
     method: "post",
     data,
   });
 };
 
+// 角色管理-绑定用户
 export const assignUser = data => {
   return request({
-    url: `${baseURl}/system/role/assignUser`,
+    url: `${baseURl}/system/role/user`,
     method: "post",
     data,
   });
 };
 
+// 角色管理-解绑用户
 export const unAssignUser = data => {
   return request({
-    url: `${baseURl}/system/role/unAssignUser`,
-    method: "post",
+    url: `${baseURl}/system/role/user`,
+    method: "delete",
     data,
   });
 };
 
+// 角色管理-列表-获取角色绑定的用户
 export const getUserByRole = params => {
   return request({
     url: `${baseURl}/system/role/user`,
