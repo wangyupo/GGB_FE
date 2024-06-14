@@ -21,8 +21,8 @@
 
 <script setup>
 import { nextTick, ref } from "vue";
-import { menuList, getMenuByRole } from "@/api/system/menu.js";
-import { assignMenu } from "@/api/system/role.js";
+import { menuList } from "@/api/system/menu.js";
+import { assignMenu, getMenuByRole } from "@/api/system/role.js";
 import { arr2tree } from "@/utils/index.js";
 import { ElMessage } from "element-plus";
 

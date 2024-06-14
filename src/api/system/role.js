@@ -80,3 +80,11 @@ export const getUserByRole = params => {
     params,
   });
 };
+
+// 角色管理-获取角色对应菜单
+export const getMenuByRole = id => {
+  return request({
+    url: `${baseURl}/system/role/${id}/menu`,
+    method: "get",
+  });
+};

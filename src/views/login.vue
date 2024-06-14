@@ -65,7 +65,7 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
-import { getMenuByRole } from "@/api/system/menu.js";
+import { getMenuByRole } from "@/api/system/role.js";
 import { login } from "@/api/login.js";
 import { useLayoutStore } from "@/stores/layout.js";
 import { arr2tree } from "@/utils/index.js";
