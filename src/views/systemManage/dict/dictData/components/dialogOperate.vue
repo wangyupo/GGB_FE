@@ -21,7 +21,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { addDictData, updateDictData } from "@/api/system/dictData.js";
+import { addDictData, updateDictData } from "@/api/systemManage/dictData.js";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 

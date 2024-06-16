@@ -31,7 +31,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { addRole, updateRole } from "@/api/system/role.js";
+import { addRole, updateRole } from "@/api/systemManage/role.js";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({

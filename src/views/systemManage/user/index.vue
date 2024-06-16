@@ -43,7 +43,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { initSearchData } from "@/utils/index.js";
-import { userList, resetPassword, deleteUser, changeStatus } from "@/api/system/user.js";
+import { userList, resetPassword, deleteUser, changeStatus } from "@/api/systemManage/user.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import DialogOperate from "./components/dialogOperate.vue";
 

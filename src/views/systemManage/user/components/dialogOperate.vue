@@ -24,7 +24,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { addUser, updateUser } from "@/api/system/user.js";
+import { addUser, updateUser } from "@/api/systemManage/user.js";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({

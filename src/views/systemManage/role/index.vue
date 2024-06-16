@@ -47,7 +47,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { initSearchData } from "@/utils/index.js";
-import { roleList, deleteRole, changeStatus } from "@/api/system/role.js";
+import { roleList, deleteRole, changeStatus } from "@/api/systemManage/role.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import DialogOperateRole from "./components/dialogOperateRole.vue";

@@ -30,7 +30,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { initSearchData, getLabel } from "@/utils/index.js";
 import { StatusOptions } from "@/enums/index.js";
-import { getUserByRole, unAssignUser } from "@/api/system/role.js";
+import { getUserByRole, unAssignUser } from "@/api/systemManage/role.js";
 import { useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import DialogUserList from "./components/dialogUserList.vue";

@@ -21,7 +21,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { addDictCategoryList, updateDictCategoryList } from "@/api/system/dictCategory.js";
+import { addDictCategoryList, updateDictCategoryList } from "@/api/systemManage/dictCategory.js";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({

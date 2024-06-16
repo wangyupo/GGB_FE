@@ -34,7 +34,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { initSearchData } from "@/utils/index.js";
-import { dictCategoryList, deleteDictCategoryList } from "@/api/system/dictCategory.js";
+import { dictCategoryList, deleteDictCategoryList } from "@/api/systemManage/dictCategory.js";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import DialogOperate from "./components/dialogOperate.vue";

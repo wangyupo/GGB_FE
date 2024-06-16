@@ -28,8 +28,8 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { userList } from "@/api/system/user.js";
-import { assignUser } from "@/api/system/role.js";
+import { userList } from "@/api/systemManage/user.js";
+import { assignUser } from "@/api/systemManage/role.js";
 import { initSearchData, getLabel } from "@/utils/index.js";
 import { StatusOptions } from "@/enums/index.js";
 import { ElMessage } from "element-plus";

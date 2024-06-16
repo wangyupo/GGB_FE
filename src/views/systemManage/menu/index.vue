@@ -64,7 +64,7 @@
 
 <script setup>
 import { nextTick, onMounted, reactive, ref } from "vue";
-import { menuList, addMenu, updateMenu, deleteMenu, moveMenu } from "@/api/system/menu.js";
+import { menuList, addMenu, updateMenu, deleteMenu, moveMenu } from "@/api/systemManage/menu.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { arr2tree } from "@/utils/index.js";
 import { SYS_MenuTypeOptions } from "@/enums/index.js";
