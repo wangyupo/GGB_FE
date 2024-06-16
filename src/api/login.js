@@ -12,14 +12,6 @@ export const login = data => {
 export const logout = () => {
   return request({
     url: `${baseURl}/logout`,
-    method: "get",
-  });
-};
-
-export const getLoginLog = params => {
-  return request({
-    url: `${baseURl}/loginLog`,
-    method: "get",
-    params,
+    method: "post",
   });
 };
