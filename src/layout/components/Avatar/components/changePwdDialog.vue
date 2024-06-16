@@ -21,7 +21,7 @@
 
 <script setup>
 import { reactive, ref } from "vue";
-import { changePassword } from "@/api/system/user.js";
+import { changePassword } from "@/api/systemManage/user.js";
 import { logout } from "@/api/login.js";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
