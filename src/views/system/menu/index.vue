@@ -127,7 +127,6 @@ const autoCalcSort = () => {
     // 添加一级节点，排序值默认为菜单最后一个的sort的值+1
     ruleForm.sort = parseInt(menu.value[menu.value.length - 1].sort) + 1;
   }
-  ruleForm.sort += "";
 };
 
 /**
