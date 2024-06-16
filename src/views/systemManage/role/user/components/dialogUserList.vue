@@ -59,7 +59,7 @@ const tableData = reactive({
     { label: "昵称", prop: "nickName", width: "120px" },
     { label: "邮箱", prop: "email", minWidth: "120px" },
     { label: "状态", prop: "status", width: "120px" },
-    { label: "添加时间", prop: "createdAt", dataType: "date", minWidth: "160px" },
+    { label: "添加时间", prop: "createdAt", dataType: "ISODate", minWidth: "160px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },

@@ -66,7 +66,7 @@ const tableData = reactive({
     { label: "昵称", prop: "nickName", width: "120px" },
     { label: "邮箱", prop: "email", minWidth: "120px" },
     { label: "状态", prop: "status", width: "120px" },
-    { label: "添加时间", prop: "createdAt", dataType: "date", minWidth: "120px" },
+    { label: "添加时间", prop: "createdAt", dataType: "ISODate", minWidth: "120px" },
     { label: "操作", prop: "operate", fixed: "right", width: "200px" },
   ],
   data: [],

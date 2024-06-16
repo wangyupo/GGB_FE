@@ -87,7 +87,7 @@
                     {{ formatPhone(scope.row[column.prop]) }}
                   </span>
                   <!-- 识别并格式化日期 -->
-                  <span v-else-if="column.dataType == 'date'">
+                  <span v-else-if="column.dataType == 'ISODate'">
                     {{ formatISODate(scope.row[column.prop]) }}
                   </span>
                   <!-- 空值默认返回 -- -->
