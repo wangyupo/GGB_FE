@@ -12,7 +12,8 @@ const notFound = () => import("@/views/404.vue");
 const largeScreen = () => import("@/views/largeScreen.vue");
 
 const home = () => import("@/views/home/index.vue");
-import routeSystem from "./routeSystem";
+import routeSystemManage from "./routeSystemManage";
+import routeLogManage from "./routeLogManage";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -67,7 +68,8 @@ const router = createRouter({
             wrapperType: "flowPage",
           },
         },
-        ...routeSystem,
+        ...routeSystemManage,
+        ...routeLogManage,
 
         {
           path: "/404",

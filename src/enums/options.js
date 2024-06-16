@@ -14,3 +14,9 @@ export const SYS_MenuTypeOptions = [
   { label: "菜单", value: 1 },
   { label: "业务页面", value: 2 },
 ];
+
+// 日志管理-登录类型
+export const LOG_LoginTypeOptions = [
+  { label: "登入", value: 1 },
+  { label: "登出", value: 2 },
+];
