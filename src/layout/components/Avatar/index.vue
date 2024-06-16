@@ -1,9 +1,9 @@
 <template>
   <!-- 个人信息 -->
   <el-dropdown trigger="click" class="h-full">
-    <div class="avatar flex items-center cursor-pointer flex-shrink-0 px-3 h-full hover:bg-[--el-color-primary-dark-2]">
-      <el-avatar :size="30" />
-      <div class="ml-2 text-white">{{ userInfo.userName }}</div>
+    <div class="avatar flex items-center cursor-pointer flex-shrink-0 px-3 h-full" :class="headerToolHoverClasses">
+      <el-avatar :size="30" icon="UserFilled" />
+      <div class="ml-2">{{ userInfo.userName }}</div>
     </div>
     <template #dropdown>
       <div class="menu">
@@ -18,6 +18,8 @@
       </div>
     </template>
   </el-dropdown>
+
+  <!-- 弹窗-修改密码 -->
   <ChangePwdDialog v-model="dialogVisible" title="修改密码" width="700px" />
 </template>
 
@@ -28,12 +30,11 @@ import { useRouter } from "vue-router";
 import { removeAllLoginInfo } from "@/utils/index";
 import { logout } from "@/api/login.js";
 import ChangePwdDialog from "./components/changePwdDialog.vue";
-import { useUserStore } from "@/stores/user.js";
-import { storeToRefs } from "pinia";
+import { useUser } from "@/hooks/useUser.js";
+import { useLayout } from "@/hooks/useLayout.js";
 
-const userStore = useUserStore();
-const { userInfo } = storeToRefs(userStore);
-
+const { headerToolHoverClasses } = useLayout();
+const { userInfo } = useUser();
 /** 弹窗 START **/
 const dialogVisible = ref(false); // 弹窗显示/隐藏
 
@@ -52,14 +53,9 @@ const handleLoginOut = params => {
   }).then(() => {
     logout()
       .then(res => {
-        if (res.code == 200) {
-          ElMessage({
-            type: "success",
-            message: "登出成功！",
-          });
-          router.replace({
-            path: "/login",
-          });
+        if (res.code == 0) {
+          ElMessage({ type: "success", message: "登出成功！" });
+          router.replace({ path: "/login" });
           removeAllLoginInfo();
         }
       })

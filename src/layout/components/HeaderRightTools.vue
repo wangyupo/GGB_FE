@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import Avatar from "./Avatar.vue";
+import Avatar from "./Avatar/index.vue";
 import SwitchLanguage from "./SwitchLanguage.vue";
 import MenuFilter from "./MenuFilter/Index.vue";
 import FullScreen from "./FullScreen.vue";
