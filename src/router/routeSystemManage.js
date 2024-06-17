@@ -4,7 +4,6 @@ const RoleUser = () => import("@/views/systemManage/role/user/index.vue");
 const Menu = () => import("@/views/systemManage/menu/index.vue");
 const Dict = () => import("@/views/systemManage/dict/index.vue");
 const DictData = () => import("@/views/systemManage/dict/dictData/index.vue");
-const LoginLog = () => import("@/views/systemManage/loginLog/index.vue");
 
 const route = [
   {
@@ -45,11 +44,6 @@ const route = [
     meta: {
       targetMenuPath: "/systemManage/role",
     },
-  },
-  {
-    path: "/systemManage/loginLog",
-    name: "LoginLog",
-    component: LoginLog,
   },
 ];
 
