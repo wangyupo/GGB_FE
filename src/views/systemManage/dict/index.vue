@@ -151,7 +151,7 @@ const handleDel = row => {
 // 字典列表
 const handleList = row => {
   router.push({
-    path: "/system/dict/data",
+    path: "/systemManage/dict/data",
     query: { id: row.id },
   });
 };

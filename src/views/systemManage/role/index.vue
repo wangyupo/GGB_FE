@@ -159,7 +159,7 @@ const handleChangeStatus = (status, row) => {
 // 分配用户
 const handleSetUser = row => {
   router.push({
-    path: "/system/role/user",
+    path: "/systemManage/role/user",
     query: { roleId: row.id },
   });
 };
