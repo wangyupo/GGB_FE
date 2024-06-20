@@ -34,7 +34,7 @@ const searchInfo = ref([
     type: "select",
     label: "用户名",
     placeholder: "请选择用户名",
-    key: "type",
+    key: "userId",
     defaultValue: "",
     options: [],
     props: { label: "userName", value: "id" },
