@@ -20,9 +20,9 @@ export const addUser = data => {
 };
 
 // 用户管理-编辑
-export const updateUser = data => {
+export const updateUser = (id, data) => {
   return request({
-    url: `${baseURl}/system/user`,
+    url: `${baseURl}/system/user/${id}`,
     method: "put",
     data,
   });
@@ -45,9 +45,9 @@ export const resetPassword = id => {
 };
 
 // 用户管理-修改密码
-export const changePassword = (id, data) => {
+export const changePassword = data => {
   return request({
-    url: `${baseURl}/system/user/${id}/password`,
+    url: `${baseURl}/system/user/password`,
     method: "patch",
     data,
   });
