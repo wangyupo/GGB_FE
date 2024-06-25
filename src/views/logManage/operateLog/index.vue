@@ -23,7 +23,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { initSearchData, getLabel } from "@/utils/index.js";
-import { requestLogList } from "@/api/logManage/requestLog.js";
+import { operateLogList } from "@/api/logManage/operateLog.js";
 import { userList } from "@/api/systemManage/user.js";
 import { LOG_LoginTypeOptions } from "@/enums/index.js";
 
@@ -46,8 +46,9 @@ const searchInfo = ref([
     startPlaceholder: "开始日期",
     endPlaceholder: "结束日期",
     key: "time",
-    startKey: "beginTime",
-    endKey: "endTime",
+    startKey: "startDate",
+    endKey: "endDate",
+    withTime: true,
     defaultValue: [],
     colSpan: 8,
   },
@@ -60,10 +61,12 @@ const tableData = reactive({
     { label: "用户名", prop: "userName", width: "140px" },
     { label: "请求路径", prop: "path", minWidth: "120px" },
     { label: "请求方式", prop: "method", width: "120px" },
-    { label: "请求参数", prop: "queryParams", minWidth: "120px" },
-    { label: "请求结构体", prop: "requestBody", minWidth: "120px" },
-    { label: "响应结构体", prop: "responseBody", minWidth: "120px" },
-    { label: "HTTP状态码", prop: "statusCode", width: "120px" },
+    { label: "代理", prop: "agent", minWidth: "120px" },
+    { label: "请求结构体", prop: "body", minWidth: "120px" },
+    { label: "响应结构体", prop: "response", minWidth: "120px" },
+    { label: "HTTP状态码", prop: "status", width: "120px" },
+    { label: "错误信息", prop: "errorMessage", minWidth: "120px" },
+    { label: "延迟", prop: "latency", width: "120px" },
     { label: "请求IP地址", prop: "ip", width: "120px" },
     { label: "请求时间", prop: "createdAt", dataType: "ISODate", width: "180px" },
     // { label: "操作", prop: "operate", fixed: "right", width: "200px" },
@@ -96,7 +99,7 @@ const fn_getList = pageNumber => {
     },
     searchForm.value
   );
-  requestLogList(params)
+  operateLogList(params)
     .then(res => {
       if (res.code == 0) {
         tableData.data = res.data.list;
