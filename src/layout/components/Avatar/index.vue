@@ -3,7 +3,7 @@
   <el-dropdown trigger="click" class="h-full">
     <div class="avatar flex items-center cursor-pointer flex-shrink-0 px-3 h-full" :class="headerToolHoverClasses">
       <el-avatar :size="30" icon="UserFilled" />
-      <div class="ml-2">{{ userInfo.userName }}</div>
+      <div class="ml-2">{{ userInfo?.userName }}</div>
     </div>
     <template #dropdown>
       <div class="menu">

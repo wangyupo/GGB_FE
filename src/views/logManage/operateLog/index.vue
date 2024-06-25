@@ -10,9 +10,6 @@
       @pageChange="fn_getList"
       @pageSizeChange="pageSizeChange"
     >
-      <template #type="{ scope }">
-        {{ getLabel(LOG_LoginTypeOptions, scope.row.type) }}
-      </template>
       <template #operate="{ scope }">
         <el-button type="primary" link>操作</el-button>
       </template>
