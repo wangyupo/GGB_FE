@@ -11,9 +11,12 @@
       @pageSizeChange="pageSizeChange"
     >
       <template #operate="{ scope }">
-        <el-button type="primary" link>操作</el-button>
+        <el-button type="primary" link icon="View" @click="showDialog(scope.row)">详情</el-button>
       </template>
     </RhTable>
+
+    <!-- 弹窗-日志详情 -->
+    <DialogInfo v-model="dialogVisible" title="日志详情" width="700px" :data="detail" />
   </div>
 </template>
 
@@ -22,7 +25,18 @@ import { onMounted, reactive, ref } from "vue";
 import { initSearchData, getLabel } from "@/utils/index.js";
 import { operateLogList } from "@/api/logManage/operateLog.js";
 import { userList } from "@/api/systemManage/user.js";
-import { LOG_LoginTypeOptions } from "@/enums/index.js";
+import DialogInfo from "./components/dialogInfo.vue";
+
+/** 弹窗 START **/
+const detail = ref({});
+const dialogVisible = ref(false); // 弹窗显示/隐藏
+
+// 显示弹窗
+const showDialog = (row = {}) => {
+  detail.value = row;
+  dialogVisible.value = true;
+};
+/** 弹窗 END **/
 
 // 条件配置
 const searchForm = ref({});
@@ -55,18 +69,10 @@ const tableData = reactive({
   showOverflowTooltip: true,
   columns: [
     { label: "序号", type: "index" },
+    { label: "请求路径", prop: "path", minWidth: "160px" },
     { label: "用户名", prop: "userName", width: "140px" },
-    { label: "请求路径", prop: "path", minWidth: "120px" },
-    { label: "请求方式", prop: "method", width: "120px" },
-    { label: "代理", prop: "agent", minWidth: "120px" },
-    { label: "请求结构体", prop: "body", minWidth: "120px" },
-    { label: "响应结构体", prop: "response", minWidth: "120px" },
-    { label: "HTTP状态码", prop: "status", width: "120px" },
-    { label: "错误信息", prop: "errorMessage", minWidth: "120px" },
-    { label: "延迟", prop: "latency", width: "120px" },
-    { label: "请求IP地址", prop: "ip", width: "120px" },
     { label: "请求时间", prop: "createdAt", dataType: "ISODate", width: "180px" },
-    // { label: "操作", prop: "operate", fixed: "right", width: "200px" },
+    { label: "操作", prop: "operate", fixed: "right", width: "140px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
