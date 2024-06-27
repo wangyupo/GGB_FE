@@ -10,6 +10,12 @@
       @pageChange="fn_getList"
       @pageSizeChange="pageSizeChange"
     >
+      <template #method="{ scope }">
+        <el-tag type="primary" v-if="scope.row.method == 'GET'">GET</el-tag>
+        <el-tag type="success" v-else-if="scope.row.method == 'POST'">POST</el-tag>
+        <el-tag type="info" v-else-if="scope.row.method == 'PUT'">PUT</el-tag>
+        <el-tag type="danger" v-else-if="scope.row.method == 'DELETE'">DELETE</el-tag>
+      </template>
       <template #operate="{ scope }">
         <el-button type="primary" link icon="View" @click="showDialog(scope.row)">详情</el-button>
       </template>
@@ -69,6 +75,7 @@ const tableData = reactive({
   showOverflowTooltip: true,
   columns: [
     { label: "序号", type: "index" },
+    { label: "请求方式", prop: "method", width: "120px" },
     { label: "请求路径", prop: "path", minWidth: "160px" },
     { label: "用户名", prop: "userName", width: "140px" },
     { label: "请求时间", prop: "createdAt", dataType: "ISODate", width: "180px" },
