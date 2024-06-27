@@ -1,7 +1,7 @@
 <template>
   <!-- 弹窗-日志详情 -->
   <el-dialog v-model="dialogVisible" v-bind="$attrs" @opened="opened" @closed="closed">
-    <el-descriptions border :column="2">
+    <el-descriptions :column="2">
       <el-descriptions-item label="请求地址">{{ data.path }}</el-descriptions-item>
       <el-descriptions-item label="请求人">{{ data.userName }}</el-descriptions-item>
       <el-descriptions-item label="IP地址">{{ data.ip }}</el-descriptions-item>
