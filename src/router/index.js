@@ -14,6 +14,7 @@ const largeScreen = () => import("@/views/largeScreen.vue");
 const home = () => import("@/views/home/index.vue");
 import routeSystemManage from "./routeSystemManage";
 import routeLogManage from "./routeLogManage";
+import routeDemo from "./routeDemo";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -68,6 +69,7 @@ const router = createRouter({
             wrapperType: "flowPage",
           },
         },
+        ...routeDemo,
         ...routeSystemManage,
         ...routeLogManage,
 
