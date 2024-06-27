@@ -7,8 +7,12 @@
       <el-descriptions-item label="IP地址">{{ data.ip }}</el-descriptions-item>
       <el-descriptions-item label="请求方式">{{ data.method }}</el-descriptions-item>
       <el-descriptions-item label="请求耗时" :span="2">{{ nsToMs(data.latency) }}毫秒</el-descriptions-item>
-      <el-descriptions-item label="请求参数" :span="2">{{ data.body }}</el-descriptions-item>
-      <el-descriptions-item label="返回参数" :span="2">{{ data.response }}</el-descriptions-item>
+      <el-descriptions-item label="请求参数" :span="2">
+        <pre class="text-wrap">{{ data.body }}</pre>
+      </el-descriptions-item>
+      <el-descriptions-item label="返回参数" :span="2">
+        <pre class="text-wrap">{{ data.response }}</pre>
+      </el-descriptions-item>
       <el-descriptions-item label="请求时间">{{ formatISODate(data.createdAt) }}</el-descriptions-item>
     </el-descriptions>
     <template #footer>
