@@ -9,3 +9,12 @@ export const loginLogList = params => {
     params,
   });
 };
+
+export const exportLoginLog = params => {
+  return request({
+    url: `${baseURl}/log/login/excel`,
+    method: "get",
+    params,
+    responseType: "blob",
+  });
+};

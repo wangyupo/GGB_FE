@@ -2,6 +2,9 @@
   <!-- 登录日志 -->
   <div>
     <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
+    <div class="mb-3 flex justify-end">
+      <el-button type="primary" icon="Download" @click="handleExport">导出</el-button>
+    </div>
     <RhTable
       border
       stripe
@@ -22,8 +25,8 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData, getLabel } from "@/utils/index.js";
-import { loginLogList } from "@/api/logManage/loginLog.js";
+import { initSearchData, getLabel, fileDownload } from "@/utils/index.js";
+import { loginLogList, exportLoginLog } from "@/api/logManage/loginLog.js";
 import { userList } from "@/api/systemManage/user.js";
 import { LOG_LoginTypeOptions } from "@/enums/index.js";
 
@@ -108,6 +111,17 @@ const fn_userList = () => {
       if (res.code == 0) {
         searchInfo.value[0].options = res.data.list;
       }
+    })
+    .catch(() => {})
+    .finally(() => {});
+};
+
+// 导出Excel
+const handleExport = () => {
+  const params = {};
+  exportLoginLog(params)
+    .then(res => {
+      fileDownload(res, "登录日志.xlsx");
     })
     .catch(() => {})
     .finally(() => {});
