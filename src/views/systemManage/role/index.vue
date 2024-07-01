@@ -19,7 +19,7 @@
           active-text="启用"
           inactive-text="禁用"
           :active-value="1"
-          :inactive-value="2"
+          :inactive-value="0"
           @change="data => handleChangeStatus(data, scope.row)"
         />
       </template>

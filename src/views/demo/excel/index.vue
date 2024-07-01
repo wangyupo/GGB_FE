@@ -22,8 +22,8 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData } from "@/utils/index.js";
-// import { getList } from "@/api/api.js";
+import { initSearchData,fileDownload } from "@/utils/index.js";
+import { exportLoginLog } from "@/api/logManage/loginLog.js";
 
 // 条件配置
 const searchForm = ref({});
@@ -105,7 +105,15 @@ const pageSizeChange = pageSize => {
 };
 
 // 导出
-const handleExport = () => {};
+const handleExport = () => {
+  const params = {}
+  exportLoginLog(params)
+    .then(res => {
+      fileDownload(res, "1.xlsx")
+    })
+    .catch(() => {})
+    .finally(() => {});
+};
 </script>
 
 <style lang="scss" scoped></style>

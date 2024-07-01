@@ -13,9 +13,6 @@
       @pageChange="fn_getList"
       @pageSizeChange="pageSizeChange"
     >
-      <template #type="{ scope }">
-        {{ getLabel(LOG_LoginTypeOptions, scope.row.type) }}
-      </template>
       <template #operate="{ scope }">
         <el-button type="primary" link>操作</el-button>
       </template>
@@ -25,10 +22,9 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData, getLabel, fileDownload } from "@/utils/index.js";
+import { initSearchData, fileDownload } from "@/utils/index.js";
 import { loginLogList, exportLoginLog } from "@/api/logManage/loginLog.js";
 import { userList } from "@/api/systemManage/user.js";
-import { LOG_LoginTypeOptions } from "@/enums/index.js";
 
 // 条件配置
 const searchForm = ref({});
@@ -52,7 +48,7 @@ const tableData = reactive({
     { label: "用户名", prop: "userName", width: "140px" },
     { label: "请求ip", prop: "ip", width: "120px" },
     { label: "用户代理（userAgent）", prop: "userAgent", minWidth: "120px" },
-    { label: "操作类型", prop: "type", width: "120px" },
+    { label: "操作类型", prop: "typeText", width: "120px" },
     { label: "记录时间", prop: "createdAt", dataType: "ISODate", width: "180px" },
     // { label: "操作", prop: "operate", fixed: "right", width: "200px" },
   ],
