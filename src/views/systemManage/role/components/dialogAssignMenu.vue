@@ -67,7 +67,6 @@ const fn_getMenuByRole = async () => {
     .then(res => {
       if (res.code == 0) {
         menuIds.value = res.data.map(i => i.id);
-        console.log(menuIds.value, res.data);
         for (let index = 0; index < menuIds.value.length; index++) {
           const menuId = menuIds.value[index];
           const node = treeRef.value.rhTreeRef.getNode(menuId);
@@ -83,8 +82,8 @@ const fn_getMenuByRole = async () => {
 const handleConfirm = () => {
   loading.value = true;
   const params = {
-    roleId: props.data.id,
-    menuIds: menuIds.value,
+    sysRoleId: props.data.id,
+    sysMenuIds: menuIds.value,
   };
   assignMenu(params)
     .then(res => {

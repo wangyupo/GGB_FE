@@ -111,8 +111,8 @@ const handleSelectionChange = val => {
 // 添加用户
 const handleConfirm = () => {
   const params = {
-    roleId: parseInt(route.query.roleId),
-    userIds: multipleSelection.value.map(i => i.id),
+    sysRoleId: parseInt(route.query.sysRoleId),
+    sysUserIds: multipleSelection.value.map(i => i.id),
   };
   assignUser(params)
     .then(res => {

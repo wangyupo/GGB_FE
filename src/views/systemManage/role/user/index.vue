@@ -91,7 +91,7 @@ const fn_getList = pageNumber => {
   loading.value = true;
   const params = Object.assign(
     {
-      roleId: route.query.roleId,
+      sysRoleId: route.query.sysRoleId,
       pageNumber: pageNumber ? pageNumber : tableData.pages.pageNumber,
       pageSize: tableData.pages.pageSize,
     },
@@ -126,8 +126,8 @@ const handleCancel = row => {
     .then(() => {
       loading.value = true;
       const params = {
-        roleId: parseInt(route.query.roleId),
-        userIds: [row.id],
+        sysRoleId: parseInt(route.query.sysRoleId),
+        sysUserIds: [row.id],
       };
       unAssignUser(params)
         .then(res => {

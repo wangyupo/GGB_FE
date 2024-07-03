@@ -160,7 +160,7 @@ const handleChangeStatus = (status, row) => {
 const handleSetUser = row => {
   router.push({
     path: "/systemManage/role/user",
-    query: { roleId: row.id },
+    query: { sysRoleId: row.id },
   });
 };
 
