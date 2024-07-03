@@ -3,6 +3,10 @@
   <div>
     <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
     <div class="mb-3 flex justify-end">
+      <el-button type="default" icon="Download" @click="handleDownloadTemplate">下载模板</el-button>
+      <el-upload action="/api/common/excel" :show-file-list="false">
+        <el-button class="mx-3" type="primary" icon="Upload" @click="handleAction">导入</el-button>
+      </el-upload>
       <el-button type="primary" icon="Download" @click="handleExport">导出</el-button>
     </div>
     <RhTable
@@ -22,30 +26,18 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { initSearchData,fileDownload } from "@/utils/index.js";
-import { exportLoginLog } from "@/api/logManage/loginLog.js";
+import { initSearchData, fileDownload } from "@/utils/index.js";
+import { downloadTemplate, excelList, exportExcel } from "@/api/common/excel.js";
 
 // 条件配置
 const searchForm = ref({});
 const searchInfo = ref([
   {
     type: "input",
-    label: "名称",
-    placeholder: "请输入名称",
+    label: "姓名",
+    placeholder: "请输入姓名",
     key: "name",
     defaultValue: "",
-    colSpan: 8,
-  },
-  {
-    type: "select",
-    label: "类型",
-    placeholder: "请选择类型",
-    key: "type",
-    defaultValue: "",
-    options: [
-      { value: "1", label: "选项一" },
-      { value: "2", label: "选项二" },
-    ],
     colSpan: 8,
   },
 ]);
@@ -54,9 +46,13 @@ const tableData = reactive({
   showOverflowTooltip: true,
   columns: [
     { label: "序号", type: "index" },
-    { label: "日期", prop: "date", minWidth: "120px" },
-    { label: "姓名", prop: "name", width: "120px" },
-    { label: "操作", prop: "operate", fixed: "right", width: "200px" },
+    { label: "姓名", prop: "name" },
+    { label: "语文", prop: "language" },
+    { label: "数学", prop: "math" },
+    { label: "英语", prop: "english" },
+    { label: "地理", prop: "geography" },
+    { label: "政治", prop: "politics" },
+    // { label: "操作", prop: "operate", fixed: "right", width: "200px" },
   ],
   data: [],
   pages: { total: 0, pageNumber: 1, pageSize: 10 },
@@ -65,8 +61,8 @@ const loading = ref(false); // 加载状态
 
 // 组件挂载完成后执行
 onMounted(() => {
-  // searchForm.value = initSearchData(searchInfo.value);
-  // fn_getList();
+  searchForm.value = initSearchData(searchInfo.value);
+  fn_getList();
 });
 
 // 条件查询
@@ -85,10 +81,10 @@ const fn_getList = pageNumber => {
     },
     searchForm.value
   );
-  getList(params)
+  excelList(params)
     .then(res => {
-      if (res.code == 200) {
-        tableData.data = res.data.rows;
+      if (res.code == 0) {
+        tableData.data = res.data.list;
         tableData.pages.total = res.data.total;
         tableData.pages.pageNumber = params.pageNumber;
       }
@@ -104,12 +100,23 @@ const pageSizeChange = pageSize => {
   fn_getList(1);
 };
 
+// 下载模板
+const handleDownloadTemplate = () => {
+  const params = {};
+  downloadTemplate(params)
+    .then(res => {
+      fileDownload(res, "成绩单模板.xlsx");
+    })
+    .catch(() => {})
+    .finally(() => {});
+};
+
 // 导出
 const handleExport = () => {
-  const params = {}
-  exportLoginLog(params)
+  const params = {};
+  exportExcel(params)
     .then(res => {
-      fileDownload(res, "1.xlsx")
+      fileDownload(res, "Excel导出示例.xlsx");
     })
     .catch(() => {})
     .finally(() => {});
