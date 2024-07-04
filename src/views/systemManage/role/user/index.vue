@@ -91,13 +91,12 @@ const fn_getList = pageNumber => {
   loading.value = true;
   const params = Object.assign(
     {
-      sysRoleId: route.query.sysRoleId,
       pageNumber: pageNumber ? pageNumber : tableData.pages.pageNumber,
       pageSize: tableData.pages.pageSize,
     },
     searchForm.value
   );
-  getUserByRole(params)
+  getUserByRole(route.query.sysRoleId, params)
     .then(res => {
       if (res.code == 0) {
         tableData.data = res.data.list;

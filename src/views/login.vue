@@ -106,10 +106,11 @@ const handleLogin = () => {
     .then(res => {
       if (res.code == 0) {
         userStore.$patch(state => {
-          state.userInfo = res.data.user;
+          const { id, userName, NickName, status } = res.data.user;
+          state.userInfo = { id, userName, NickName, status };
         });
         userStore.$patch(state => {
-          state.menu = arr2tree(res.data.menu);
+          state.menu = arr2tree(res.data.user.roles[0].menus);
         });
         router.replace({ path: "/" });
       }

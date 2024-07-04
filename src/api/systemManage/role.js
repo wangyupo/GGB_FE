@@ -73,9 +73,9 @@ export const unAssignUser = data => {
 };
 
 // 角色管理-列表-获取角色绑定的用户
-export const getUserByRole = params => {
+export const getUserByRole = (id, params) => {
   return request({
-    url: `${baseURl}/system/role/user`,
+    url: `${baseURl}/system/role/${id}/user`,
     method: "get",
     params,
   });
