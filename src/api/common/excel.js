@@ -19,10 +19,10 @@ export const downloadTemplate = () => {
   });
 };
 
-// Excel导入/导出-列表
+// Excel导入/导出-导入
 export const ImportExcel = params => {
   return request({
-    url: `${baseURl}/common/excel`,
+    url: `${baseURl}/common/excel/import`,
     method: "POST",
     params,
   });
