@@ -11,8 +11,8 @@ export const StatusOptions = [
 
 // 系统管理-菜单类型
 export const SYS_MenuTypeOptions = [
-  { label: "菜单", value: 1 },
-  { label: "业务页面", value: 2 },
+  { label: "菜单", value: 0 },
+  { label: "业务页面", value: 1 },
 ];
 
 // 日志管理-登录类型

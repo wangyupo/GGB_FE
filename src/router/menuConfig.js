@@ -11,5 +11,5 @@ export const menuKey = {
   icon: "icon", // 菜单icon
   // 下面这俩，其实就是 menu.json 里，"menuType": 0 的 key 和 value 的拆解
   menuType: "type", // 菜单类型：菜单、业务页面
-  menuValue: "1", // 菜单的值，1-菜单，其它-隐藏
+  menuValue: "0", // 菜单的值，0-菜单，其它-隐藏
 };

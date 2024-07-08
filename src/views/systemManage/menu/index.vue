@@ -80,9 +80,9 @@ const ruleForm = reactive({
   label: "",
   path: "",
   icon: "",
-  parentId: 0, // 默认为0，代表根节点
+  parentId: 0, // 默认为 0，代表根节点
   sort: 1,
-  type: 1, // 页面类型：1-菜单；2-业务页面
+  type: 0, // 页面类型：0-菜单；1-业务页面
 });
 const rules = reactive({
   label: [{ required: true, message: "请输入菜单名称", trigger: "blur" }],
