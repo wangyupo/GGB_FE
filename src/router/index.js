@@ -11,7 +11,6 @@ const refreshPage = () => import("@/views/refreshPage.vue");
 const notFound = () => import("@/views/404.vue");
 const largeScreen = () => import("@/views/largeScreen.vue");
 
-const home = () => import("@/views/home/index.vue");
 import routeSystemManage from "./routeSystemManage";
 import routeLogManage from "./routeLogManage";
 import routeDemo from "./routeDemo";
@@ -60,15 +59,6 @@ const router = createRouter({
           },
         },
 
-        {
-          path: "/home",
-          name: "home",
-          component: home,
-          meta: {
-            transparentBackground: true,
-            wrapperType: "flowPage",
-          },
-        },
         ...routeDemo,
         ...routeSystemManage,
         ...routeLogManage,
