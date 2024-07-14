@@ -4,8 +4,8 @@
     <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
     <div class="mb-3 flex justify-end">
       <el-button type="default" icon="Download" @click="handleDownloadTemplate">下载模板</el-button>
-      <el-upload action="/api/common/excel" :show-file-list="false">
-        <el-button class="mx-3" type="primary" icon="Upload" @click="handleAction">导入</el-button>
+      <el-upload action="/api/common/excel/import" :show-file-list="false">
+        <el-button class="mx-3" type="primary" icon="Upload">导入</el-button>
       </el-upload>
       <el-button type="primary" icon="Download" @click="handleExport">导出</el-button>
     </div>
