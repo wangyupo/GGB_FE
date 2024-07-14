@@ -4,7 +4,7 @@
     <RhSearch :searchInfo="searchInfo" @search="handleSearch" />
     <div class="mb-3 flex justify-end">
       <el-button type="default" icon="Download" @click="handleDownloadTemplate">下载模板</el-button>
-      <el-upload action="/api/common/excel/import" :show-file-list="false">
+      <el-upload action="/api/common/excel/import" :show-file-list="false" :on-success="success">
         <el-button class="mx-3" type="primary" icon="Upload">导入</el-button>
       </el-upload>
       <el-button type="primary" icon="Download" @click="handleExport">导出</el-button>
@@ -28,6 +28,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { initSearchData, fileDownload } from "@/utils/index.js";
 import { downloadTemplate, excelList, exportExcel } from "@/api/common/excel.js";
+import { ElMessage } from "element-plus";
 
 // 条件配置
 const searchForm = ref({});
@@ -120,6 +121,16 @@ const handleExport = () => {
     })
     .catch(() => {})
     .finally(() => {});
+};
+
+// 导出成功
+const success = response => {
+  if (response.code == 0) {
+    fn_getList();
+    ElMessage({ type: "success", message: response.msg });
+    return
+  }
+  ElMessage({ type: "warning", message: response.msg });
 };
 </script>
 
